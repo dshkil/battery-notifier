@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<CheckBoxPreference
+		android:key="is_enabled"
+		android:title="Enabled"
+		android:summary="Summary"
+	/>
+
+	<ListPreference
+		android:key="level"
+		android:title="Title"
+		android:summary="Summary"
+		android:layout="?android:attr/preferenceLayoutChild"
+		android:entries="@array/level_titles"
+		android:entryValues="@array/level_values"
+		android:dependency="is_enabled"
+		android:dialogTitle="dialog title"
+	/>
+
+</PreferenceScreen>
