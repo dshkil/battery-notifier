@@ -15,7 +15,7 @@ public class BatteryNotifierService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.i("battery", action);
+            Log.i("BatteryNotifierService", action);
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
 //            	int level = intent.getIntExtra("level", -1);
 //            	int scale = intent.getIntExtra("scale", 100);
@@ -33,19 +33,19 @@ public class BatteryNotifierService extends Service {
 
     @Override
     public void onCreate() {
-    	Log.i("battery", "onCreate");
+    	Log.i("BatteryNotifierService", "onCreate");
     	registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     @Override
     public void onDestroy() {
-    	Log.i("battery", "onDestroy");
+    	Log.i("BatteryNotifierService", "onDestroy");
     	unregisterReceiver(batteryInfoReceiver);
     }
 
     @Override
     public IBinder onBind(Intent paramIntent) {
-    	Log.i("battery", "onBind");
+    	Log.i("BatteryNotifierService", "onBind");
     	return binder;
     }
 

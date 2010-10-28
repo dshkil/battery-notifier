@@ -5,6 +5,7 @@
 		android:key="is_enabled"
 		android:title="Enabled"
 		android:summary="Summary"
+		android:defaultValue="true"
 	/>
 
 	<ListPreference
