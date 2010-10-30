@@ -4,19 +4,18 @@
 	<CheckBoxPreference
 		android:key="is_enabled"
 		android:title="Enabled"
-		android:summary="Summary"
 		android:defaultValue="true"
 	/>
 
 	<ListPreference
-		android:key="level"
-		android:title="Title"
-		android:summary="Summary"
+		android:key="low_battery_level"
+		android:title="@string/low_battery_level"
 		android:layout="?android:attr/preferenceLayoutChild"
 		android:entries="@array/level_titles"
 		android:entryValues="@array/level_values"
 		android:dependency="is_enabled"
-		android:dialogTitle="dialog title"
+		android:dialogTitle="@string/low_battery_level"
+		android:defaultValue="30"
 	/>
 
 </PreferenceScreen>

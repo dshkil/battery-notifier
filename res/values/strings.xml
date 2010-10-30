@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Battery Notifier</string>
-	<string name="settings_title">Battery Notifier Settings</string>
+
+<string name="app_name">Battery Notifier</string>
+<string name="settings_title">Battery Notifier Settings</string>
+<string name="low_battery_level">Low Battery Level</string>
+<string name="low_battery_level_summary">Battery levels below %1$s%% will be notified</string>
+<string name="service_is_running">Service is currently running</string>
+<string name="service_is_stopped">Service is currently stopped</string>
+
 </resources>
