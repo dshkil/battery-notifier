@@ -1,10 +1,10 @@
 package com.shkil.battery;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 
@@ -16,6 +16,15 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		setTitle(R.string.settings_title);
 		addPreferencesFromResource(R.xml.settings);
 		updateSummary();
+		new Thread() {
+			@Override
+			public void run() {
+				SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
+				if (settings.getBoolean(Settings.ENABLED, true)) {
+					startService(new Intent(SettingsActivity.this, BatteryNotifierService.class));
+				}
+			}
+		}.start();
 	}
 
 	@Override
@@ -32,17 +41,16 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
-		if (Settings.ENABLED_KEY.equals(key)) {
-			Context context = getApplicationContext();
-			if (settings.getBoolean(Settings.ENABLED_KEY, true)) {
-				context.startService(new Intent(context, BatteryNotifierService.class));
+		if (Settings.ENABLED.equals(key)) {
+			if (settings.getBoolean(Settings.ENABLED, true)) {
+				startService(new Intent(this, BatteryNotifierService.class));
 			}
 			else {
-				context.stopService(new Intent(context, BatteryNotifierService.class));
+				stopService(new Intent(this, BatteryNotifierService.class));
 			}
 			updateSummary();
 		}
-		else if (Settings.LOW_BATTERY_LEVEL_KEY.equals(key)) {
+		else if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.INTERVAL.equals(key)) {
 			updateSummary();
 		}
 	}
@@ -51,13 +59,17 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		SharedPreferences settings = preferenceScreen.getSharedPreferences();
 
-		boolean isEnabled = settings.getBoolean(Settings.ENABLED_KEY, true); //FIXME check if service is running
+		boolean isEnabled = settings.getBoolean(Settings.ENABLED, true); //FIXME check if service is actually running
 		int isEnabledSummary = isEnabled ? R.string.service_is_running : R.string.service_is_stopped;
-		preferenceScreen.findPreference(Settings.ENABLED_KEY).setSummary(isEnabledSummary);
+		preferenceScreen.findPreference(Settings.ENABLED).setSummary(isEnabledSummary);
 
-		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL_KEY, "30");
+		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, null);
 		String lowLevelSummary = getString(R.string.low_battery_level_summary, lowLevelValue);
-		preferenceScreen.findPreference(Settings.LOW_BATTERY_LEVEL_KEY).setSummary(lowLevelSummary);
+		preferenceScreen.findPreference(Settings.LOW_BATTERY_LEVEL).setSummary(lowLevelSummary);
+
+		ListPreference intervalPreference = (ListPreference) preferenceScreen.findPreference(Settings.INTERVAL);
+		String intervalSummary = getString(R.string.interval_summary, intervalPreference.getEntry());
+		intervalPreference.setSummary(intervalSummary);
 	}
 
 }

@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
 <string name="app_name">Battery Notifier</string>
+<string name="launcher_name">Battery Notifier</string>
 <string name="settings_title">Battery Notifier Settings</string>
 <string name="low_battery_level">Low Battery Level</string>
 <string name="low_battery_level_summary">Battery levels below %1$s%% will be notified</string>
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped</string>
-
+<string name="battery_level_is_low">Battery charge level is low</string>
+<string name="vibrate">Vibrate</string>
+<string name="enabled">Enabled</string>
+<string name="sound">Sound</string>
+<string name="interval">Interval</string>
+<string name="interval_summary">Insist every %1$s</string>
+<string name="low_battery_level_ticker">Battery charge level is getting low...</string>
 </resources>

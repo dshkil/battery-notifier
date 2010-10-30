@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<item name="default_low_level" type="string" format="integer">30</item>
+	<item name="default_low_level" type="integer" format="integer">@string/default_low_level</item>
+	<item name="default_vibrate" type="bool" format="boolean">true</item>
+	<item name="default_sound" type="bool" format="boolean">true</item>
+	<item name="default_interval" type="string" format="integer">600000</item>
+	<item name="default_interval" type="integer" format="integer">@string/default_interval</item>
+
+	<string-array name="level_titles">
+		<item>5%</item>
+		<item>10%</item>
+		<item>15%</item>
+		<item>20%</item>
+		<item>30%</item>
+		<item>40%</item>
+		<item>60%</item>
+		<item>100% - for testing</item>
+	</string-array>
+	<string-array name="level_values">
+		<item>5</item>
+		<item>10</item>
+		<item>15</item>
+		<item>20</item>
+		<item>30</item>
+		<item>40</item>
+		<item>60</item>
+		<item>100</item>
+	</string-array>
+
+	<string-array name="interval_titles">
+		<item>10 seconds - for testing</item>
+		<item>1 minute</item>
+		<item>5 minutes</item>
+		<item>10 minutes</item>
+		<item>15 minutes</item>
+		<item>25 minutes</item>
+		<item>40 minutes</item>
+	</string-array>
+	<string-array name="interval_values">
+		<item>10000</item>
+		<item>60000</item>
+		<item>300000</item>
+		<item>600000</item>
+		<item>900000</item>
+		<item>1500000</item>
+		<item>2400000</item>
+	</string-array>
+
+</resources>

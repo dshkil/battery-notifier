@@ -2,8 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<CheckBoxPreference
-		android:key="is_enabled"
-		android:title="Enabled"
+		android:key="enabled"
+		android:title="@string/enabled"
 		android:defaultValue="true"
 	/>
 
@@ -13,9 +13,34 @@
 		android:layout="?android:attr/preferenceLayoutChild"
 		android:entries="@array/level_titles"
 		android:entryValues="@array/level_values"
-		android:dependency="is_enabled"
+		android:dependency="enabled"
 		android:dialogTitle="@string/low_battery_level"
-		android:defaultValue="30"
+		android:defaultValue="@string/default_low_level"
+	/>
+
+	<CheckBoxPreference
+		android:key="vibrate"
+		android:title="@string/vibrate"
+		android:defaultValue="@bool/default_vibrate"
+		android:dependency="enabled"
+	/>
+	
+	<CheckBoxPreference
+		android:key="sound"
+		android:title="@string/sound"
+		android:defaultValue="@bool/default_sound"
+		android:dependency="enabled"
+	/>
+	
+	<ListPreference
+		android:key="interval"
+		android:title="@string/interval"
+		android:layout="?android:attr/preferenceLayoutChild"
+		android:entries="@array/interval_titles"
+		android:entryValues="@array/interval_values"
+		android:dependency="enabled"
+		android:dialogTitle="@string/interval"
+		android:defaultValue="@string/default_interval"
 	/>
 
 </PreferenceScreen>
