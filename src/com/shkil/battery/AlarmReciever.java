@@ -35,7 +35,6 @@ public class AlarmReciever extends BroadcastReceiver {
 			}
 			player.play(context, BatteryNotifierService.sound, false, AudioManager.STREAM_NOTIFICATION);
 		}
-
 	}
 
 }
