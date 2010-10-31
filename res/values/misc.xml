@@ -16,7 +16,10 @@
 		<item>30%</item>
 		<item>40%</item>
 		<item>60%</item>
-		<item>100% - for testing</item>
+		<item>70%</item>
+		<item>80%</item>
+		<item>90%</item>
+		<item>101% - for testing</item>
 	</string-array>
 	<string-array name="level_values">
 		<item>5</item>
@@ -26,7 +29,10 @@
 		<item>30</item>
 		<item>40</item>
 		<item>60</item>
-		<item>100</item>
+		<item>70</item>
+		<item>80</item>
+		<item>90</item>
+		<item>101</item>
 	</string-array>
 
 	<string-array name="interval_titles">

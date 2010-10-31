@@ -1,5 +1,6 @@
 package com.shkil.battery;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,8 +16,8 @@ import android.media.AsyncPlayer;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.BatteryManager;
-import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Audio;
@@ -31,49 +32,32 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	boolean isBatteryLow;
 	int lowBatteryLevel;
 	int insistInterval;
-	int lastBatteryLevel = -1;
+	int lastBatteryLevel;
 
-	final Handler handler = new Handler();
+	PendingIntent insistTimerPendingIntent;
+	boolean insistTimerActive;
+	@Deprecated
 	AsyncPlayer player;
-	Uri sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");
+	@Deprecated
+	static final Uri sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");
 
 	final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+			int percent = level * 100 / scale;
+			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			if (status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL) {
+				lastBatteryLevel = percent;
 				if (isBatteryLow) {
 					isBatteryLow = false;
 					onBatteryOkay();
-					lastBatteryLevel = -1; //FIXME #debug remove?
 				}
 			}
-			else if (level != lastBatteryLevel) {
-				int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
-				int percent = level * 100 / scale;
-				Log.v(TAG, "Level changed. level=" + percent + "%, status=" + status);
-				if (percent <= lowBatteryLevel) { //FIXME #debug above only
-					if (!isBatteryLow) {
-						isBatteryLow = true;
-						onBatteryLow();
-					}
-				}
-				else if (isBatteryLow) {
-					isBatteryLow = false;
-					onBatteryOkay();
-				}
-			}
-			lastBatteryLevel = level;
-		}
-	};
-
-	final Runnable insistRunnable = new Runnable() {
-		@Override
-		public void run() {
-			onInsist();
-			if (isBatteryLow) {
-				handler.postDelayed(this, insistInterval);
+			else if (lastBatteryLevel != percent) {
+				lastBatteryLevel = percent;
+				checkBatteryLevel();
 			}
 		}
 	};
@@ -81,11 +65,12 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	@Override
 	public void onCreate() {
 		Log.i(TAG, "onCreate");
+		Intent alarmRecieverIntent = new Intent(this, AlarmReciever.class);
+		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, alarmRecieverIntent, 0);
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		updateValuesFromSettings(settings);
+		updateValuesFromSettings(settings, null);
 		registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		settings.registerOnSharedPreferenceChangeListener(this);
-		//onBatteryLow(); //FIXME #debug remove
 	}
 
 	@Override
@@ -107,32 +92,73 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
-		if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.INTERVAL.equals(key)) {
-			updateValuesFromSettings(settings);
+		updateValuesFromSettings(settings, key);
+	}
+
+	void updateValuesFromSettings(SharedPreferences settings, String key) {
+		Log.v(TAG, "Updating values from settings...");
+		if (Settings.VIBRATE.equals(key) || Settings.SOUND.equals(key)) {
+			if (isBatteryLow) {
+				Resources resources = getResources();
+				boolean vibrate = settings.getBoolean(Settings.VIBRATE, resources.getBoolean(R.bool.default_vibrate));
+				if (vibrate || settings.getBoolean(Settings.SOUND, resources.getBoolean(R.bool.default_sound))) {
+					if (!insistTimerActive) {
+						startInsist();
+					}
+				}
+				else if (insistTimerActive) {
+					stopInsist();
+				}
+			}
+		}
+		else {
+			if (key == null || Settings.LOW_BATTERY_LEVEL.equals(key)) {
+				try {
+					String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, null);
+					if (lowLevelValue == null) {
+						lowLevelValue = getString(R.string.default_low_level);
+					}
+					setLowBatteryLevel(Integer.parseInt(lowLevelValue));
+				}
+				catch (NumberFormatException ex) {
+					setLowBatteryLevel(getResources().getInteger(R.string.default_low_level));
+				}
+			}
+			if (key == null || Settings.INTERVAL.equals(key)) {
+				try {
+					String intervalValue = settings.getString(Settings.INTERVAL, null);
+					if (intervalValue == null) {
+						intervalValue = getString(R.string.default_interval);
+					}
+					setInsistInterval(Integer.parseInt(intervalValue));
+				}
+				catch (NumberFormatException ex) {
+					setInsistInterval(getResources().getInteger(R.string.default_interval));
+				}
+			}
 		}
 	}
 
-	void updateValuesFromSettings(SharedPreferences settings) {
-		Log.v(TAG, "Updating values from settings...");
-		try {
-			String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, null);
-			if (lowLevelValue == null) {
-				lowLevelValue = getString(R.string.default_low_level);
+	void setLowBatteryLevel(int level) {
+		if (lowBatteryLevel != level) {
+			lowBatteryLevel = level;
+			checkBatteryLevel();
+		}
+	}
+
+	void checkBatteryLevel() {
+		Log.d(TAG, "checkBatteryLevel");
+		if (lastBatteryLevel > 0) {
+			if (lastBatteryLevel >= lowBatteryLevel) {
+				if (isBatteryLow) {
+					isBatteryLow = false;
+					onBatteryOkay();
+				}
 			}
-			lowBatteryLevel = Integer.parseInt(lowLevelValue);
-		}
-		catch (NumberFormatException ex) {
-			lowBatteryLevel = getResources().getInteger(R.string.default_low_level);
-		}
-		try {
-			String intervalValue = settings.getString(Settings.INTERVAL, null);
-			if (intervalValue == null) {
-				intervalValue = getString(R.string.default_interval);
+			else if (!isBatteryLow) {
+				isBatteryLow = true;
+				onBatteryLow();
 			}
-			setInsistInterval(Integer.parseInt(intervalValue));
-		}
-		catch (NumberFormatException ex) {
-			setInsistInterval(getResources().getInteger(R.string.default_interval));
 		}
 	}
 
@@ -149,6 +175,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	void showNotification(boolean canInsist) {
+		stopInsist();
 		NotificationManager notifyService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
 		Notification notification = new Notification(
@@ -175,20 +202,26 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void setInsistInterval(int interval) {
 		this.insistInterval = interval;
-		if (isBatteryLow) {
+		if (isBatteryLow && insistTimerActive) {
 			startInsist();
 		}
 	}
 
 	void startInsist() {
-		handler.removeCallbacks(insistRunnable);
-		handler.postDelayed(insistRunnable, insistInterval);
+		insistTimerActive = true;
+		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		alarmManager.cancel(insistTimerPendingIntent);
+		long firstTime = System.currentTimeMillis() + insistInterval;
+		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstTime, insistInterval, insistTimerPendingIntent);
 	}
 
 	void stopInsist() {
-		handler.removeCallbacks(insistRunnable);
+		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		alarmManager.cancel(insistTimerPendingIntent);
+		insistTimerActive = false;
 	}
 
+	@Deprecated
 	void onInsist() {
 		Log.d(TAG, "onInsist");
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -203,7 +236,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 		if (settings.getBoolean(Settings.SOUND, resources.getBoolean(R.bool.default_sound))) {
 			if (player == null) {
-				player = new AsyncPlayer("insist");
+				player = new AsyncPlayer("insistTimerActive");
 			}
 			player.play(this, sound, false, AudioManager.STREAM_NOTIFICATION);
 		}

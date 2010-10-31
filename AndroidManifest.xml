@@ -9,7 +9,7 @@
         <activity
 			android:name=".SettingsActivity"
 			android:label="@string/launcher_name"
-			android:excludeFromRecents="true">
+			android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -17,6 +17,8 @@
         </activity>
 
 		<service android:name=".BatteryNotifierService" android:label="Battery Notifier Service"/>
+
+		<receiver android:name=".AlarmReciever" />
 
 		<receiver
 			android:name=".BootCompletedReceiver"
