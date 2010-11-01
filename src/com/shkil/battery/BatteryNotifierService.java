@@ -12,21 +12,16 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
-import android.media.AsyncPlayer;
-import android.media.AudioManager;
-import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore.Audio;
 import android.util.Log;
 
 public class BatteryNotifierService extends Service implements OnSharedPreferenceChangeListener {
 
 	static final String TAG = BatteryNotifierService.class.getSimpleName();
-	static final int BATTERY_LOW_NOTIFY_ID = 1; 
 	static final long[] VIBRATE_PATTERN = new long[] {0,50,200,100};
+	static final int BATTERY_LOW_NOTIFY_ID = 1; 
 
 	static final int STATE_UNKNOWN = 0;
 	static final int STATE_OKAY = 1;
@@ -40,42 +35,40 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	PendingIntent insistTimerPendingIntent;
 	boolean insistTimerActive;
-	@Deprecated
-	AsyncPlayer player;
-	@Deprecated
-	static final Uri sound = Uri.withAppendedPath(Audio.Media.INTERNAL_CONTENT_URI, "6");
 
 	final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+		private int lastRawLevel;
+		private int lastStatus;
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
-			Log.v(TAG, "batteryInfoReceiver: status=" + status);
-			if (status == BatteryManager.BATTERY_STATUS_FULL) {
-				Log.v(TAG, "full");
-				boolean onBattery = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) == 0;
-				lastBatteryState = onBattery ? STATE_OKAY : STATE_CHARGING;
-				lastBatteryLevel = 100;
-			}
-			else {
-				int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-				int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
-				int percent = level * 100 / scale;
-				if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-					Log.v(TAG, "charging");
-					lastBatteryLevel = percent;
-					if (lastBatteryState != STATE_CHARGING) {
-						if (lastBatteryState != STATE_OKAY) {
-							lastBatteryState = STATE_CHARGING;
-							onBatteryOkay();
-						}
-						else {
-							lastBatteryState = STATE_CHARGING;
-						}
-					}
+			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
+			if (level != lastRawLevel || status != lastStatus) {
+				Log.d(TAG, "batteryInfoReceiver[values changed]: status=" + status + ", level=" + level);
+				lastRawLevel = level;
+				lastStatus = status;
+				if (status == BatteryManager.BATTERY_STATUS_FULL) {
+					boolean onBattery = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) == 0;
+					lastBatteryState = onBattery ? STATE_OKAY : STATE_CHARGING;
+					lastBatteryLevel = 100;
 				}
 				else {
-					Log.v(TAG, "else");
-					if (lastBatteryLevel != percent) {
+					int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+					int percent = level * 100 / scale;
+					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
+						lastBatteryLevel = percent;
+						if (lastBatteryState != STATE_CHARGING) {
+							if (lastBatteryState != STATE_OKAY) {
+								lastBatteryState = STATE_CHARGING;
+								onBatteryOkay();
+							}
+							else {
+								lastBatteryState = STATE_CHARGING;
+							}
+						}
+					}
+					else if (lastBatteryLevel != percent) {
 						lastBatteryLevel = percent;
 						checkBatteryLevel();
 					}
@@ -122,11 +115,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void updateValuesFromSettings(SharedPreferences settings, String key) {
 		Log.v(TAG, "Updating values from settings...");
-		if (Settings.VIBRATE.equals(key) || Settings.SOUND.equals(key)) {
+		if (Settings.ALERT_VIBRO_ON.equals(key) || Settings.ALERT_SOUND_ON.equals(key)) {
 			if (lastBatteryState == STATE_LOW) {
 				Resources resources = getResources();
-				boolean vibrate = settings.getBoolean(Settings.VIBRATE, resources.getBoolean(R.bool.default_vibrate));
-				if (vibrate || settings.getBoolean(Settings.SOUND, resources.getBoolean(R.bool.default_sound))) {
+				boolean vibrate = settings.getBoolean(Settings.ALERT_VIBRO_ON, resources.getBoolean(R.bool.default_alert_vibro_on));
+				if (vibrate || settings.getBoolean(Settings.ALERT_SOUND_ON, resources.getBoolean(R.bool.default_alert_sound_on))) {
 					if (!insistTimerActive) {
 						startInsist();
 					}
@@ -149,16 +142,16 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					setLowBatteryLevel(getResources().getInteger(R.string.default_low_level));
 				}
 			}
-			if (key == null || Settings.INTERVAL.equals(key)) {
+			if (key == null || Settings.ALERT_INTERVAL.equals(key)) {
 				try {
-					String intervalValue = settings.getString(Settings.INTERVAL, null);
+					String intervalValue = settings.getString(Settings.ALERT_INTERVAL, null);
 					if (intervalValue == null) {
-						intervalValue = getString(R.string.default_interval);
+						intervalValue = getString(R.string.default_alert_interval);
 					}
 					setInsistInterval(Integer.parseInt(intervalValue));
 				}
 				catch (NumberFormatException ex) {
-					setInsistInterval(getResources().getInteger(R.string.default_interval));
+					setInsistInterval(getResources().getInteger(R.string.default_alert_interval));
 				}
 			}
 		}
@@ -176,7 +169,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void checkBatteryLevel() {
 		Log.d(TAG, "checkBatteryLevel(): lastBatteryState=" + lastBatteryState);
-		if (lastBatteryLevel >= lowBatteryLevel) {
+		if (lastBatteryLevel > lowBatteryLevel) {
 			if (lastBatteryState != STATE_OKAY) {
 				lastBatteryState = STATE_OKAY;
 				onBatteryOkay();
@@ -205,18 +198,18 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		NotificationManager notifyService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
 		Notification notification = new Notification(
-			R.drawable.battery_low, getString(R.string.low_battery_level_ticker), System.currentTimeMillis()
+				R.drawable.battery_low, getString(R.string.low_battery_level_ticker), System.currentTimeMillis()
 		);
 		notification.flags |= Notification.FLAG_NO_CLEAR;
 		Resources resources = getResources();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean shouldInsist = false;
-		if (settings.getBoolean(Settings.VIBRATE, resources.getBoolean(R.bool.default_vibrate))) {
+		if (settings.getBoolean(Settings.ALERT_VIBRO_ON, resources.getBoolean(R.bool.default_alert_vibro_on))) {
 			notification.vibrate = VIBRATE_PATTERN;
 			shouldInsist = true;
 		}
-		if (settings.getBoolean(Settings.SOUND, resources.getBoolean(R.bool.default_sound))) {
-			notification.sound = sound;
+		if (settings.getBoolean(Settings.ALERT_SOUND_ON, resources.getBoolean(R.bool.default_alert_sound_on))) {
+			notification.sound = Settings.getAlertRingtone(settings);
 			shouldInsist = true;
 		}
 		notification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), "", contentIntent);
@@ -245,27 +238,6 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		insistTimerActive = false;
 		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		alarmManager.cancel(insistTimerPendingIntent);
-	}
-
-	@Deprecated
-	void onInsist() {
-		Log.d(TAG, "onInsist");
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Resources resources = getResources();
-		if (settings.getBoolean(Settings.VIBRATE, resources.getBoolean(R.bool.default_vibrate))) {
-			AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-			int vibrateSetting = audioManager.getVibrateSetting(AudioManager.VIBRATE_TYPE_NOTIFICATION);
-			if (vibrateSetting != AudioManager.VIBRATE_SETTING_OFF) {
-				Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-				vibrator.vibrate(VIBRATE_PATTERN, -1);
-			}
-		}
-		if (settings.getBoolean(Settings.SOUND, resources.getBoolean(R.bool.default_sound))) {
-			if (player == null) {
-				player = new AsyncPlayer("insistTimerActive");
-			}
-			player.play(this, sound, false, AudioManager.STREAM_NOTIFICATION);
-		}
 	}
 
 }

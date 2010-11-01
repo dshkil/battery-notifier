@@ -1,12 +1,16 @@
 package com.shkil.battery;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.provider.Settings.System;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
@@ -16,6 +20,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		setTitle(R.string.settings_title);
 		addPreferencesFromResource(R.xml.settings);
 		updateSummary();
+		updateRingtoneSummary();
 		new Thread() {
 			@Override
 			public void run() {
@@ -25,11 +30,20 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				}
 			}
 		}.start();
+		Preference aboutPreference = getPreferenceScreen().findPreference("about");
+		aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference pref) {
+				showAlertDialog(R.string.about_message, R.string.about);
+				return true;
+			}
+		});
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		updateRingtoneSummary();
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
 
@@ -48,9 +62,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			else {
 				stopService(new Intent(this, BatteryNotifierService.class));
 			}
-			updateSummary();
 		}
-		else if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.INTERVAL.equals(key)) {
+		else if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)) {
 			updateSummary();
 		}
 	}
@@ -59,17 +72,35 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		SharedPreferences settings = preferenceScreen.getSharedPreferences();
 
-		boolean isEnabled = settings.getBoolean(Settings.ENABLED, true); //FIXME check if service is actually running
-		int isEnabledSummary = isEnabled ? R.string.service_is_running : R.string.service_is_stopped;
-		preferenceScreen.findPreference(Settings.ENABLED).setSummary(isEnabledSummary);
-
-		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, null);
+		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, "x");
 		String lowLevelSummary = getString(R.string.low_battery_level_summary, lowLevelValue);
 		preferenceScreen.findPreference(Settings.LOW_BATTERY_LEVEL).setSummary(lowLevelSummary);
 
-		ListPreference intervalPreference = (ListPreference) preferenceScreen.findPreference(Settings.INTERVAL);
-		String intervalSummary = getString(R.string.interval_summary, intervalPreference.getEntry());
+		ListPreference intervalPreference = (ListPreference) preferenceScreen.findPreference(Settings.ALERT_INTERVAL);
+		String intervalSummary = getString(R.string.alert_interval_summary, intervalPreference.getEntry());
 		intervalPreference.setSummary(intervalSummary);
+	}
+
+	protected void updateRingtoneSummary() {
+		PreferenceScreen preferenceScreen = getPreferenceScreen();
+		SharedPreferences settings = preferenceScreen.getSharedPreferences();
+		Preference ringtonePreference = preferenceScreen.findPreference(Settings.ALERT_RINGTONE);
+		String ringtone = settings.getString(Settings.ALERT_RINGTONE, null);
+		if (ringtone == null || System.DEFAULT_NOTIFICATION_URI.toString().equals(ringtone)) {
+			ringtonePreference.setSummary(R.string.alert_ringtone_is_default);
+		}
+		else {
+			ringtonePreference.setSummary(R.string.alert_ringtone_is_custom);
+		}
+	}
+
+	void showAlertDialog(int messageId, int titleId) {
+		new AlertDialog.Builder(this)
+		.setMessage(messageId)
+		.setTitle(titleId)
+		.setNeutralButton(android.R.string.ok, null)
+		.create()
+		.show();
 	}
 
 }
