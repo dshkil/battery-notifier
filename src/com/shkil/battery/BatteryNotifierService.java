@@ -33,6 +33,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	int lastBatteryState = STATE_OKAY;
 	int lastBatteryLevel;
 
+	NotificationManager notificationService;
+	Notification notification;
 	PendingIntent insistTimerPendingIntent;
 	boolean insistTimerActive;
 
@@ -43,11 +45,10 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		public void onReceive(Context context, Intent intent) {
 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-			Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
 			if (level != lastRawLevel || status != lastStatus) {
-				Log.d(TAG, "batteryInfoReceiver[values changed]: status=" + status + ", level=" + level);
 				lastRawLevel = level;
 				lastStatus = status;
+				Log.v(TAG, "batteryInfoReceiver[values changed]: status=" + status + ", level=" + level);
 				if (status == BatteryManager.BATTERY_STATUS_FULL) {
 					boolean onBattery = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) == 0;
 					lastBatteryState = onBattery ? STATE_OKAY : STATE_CHARGING;
@@ -71,9 +72,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					else if (lastBatteryLevel != percent) {
 						lastBatteryLevel = percent;
 						checkBatteryLevel();
+						updateNotificationInfo();
 					}
 					else {
 						lastBatteryState = STATE_UNKNOWN;
+						updateNotificationInfo();
 					}
 				}
 			}
@@ -85,6 +88,12 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		Log.i(TAG, "onCreate");
 		Intent alarmRecieverIntent = new Intent(this, AlarmReciever.class);
 		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, alarmRecieverIntent, 0);
+		notificationService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		notification = new Notification(
+			R.drawable.battery_low, getString(R.string.low_battery_level_ticker), System.currentTimeMillis()
+		);
+		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
+		notification.flags |= Notification.FLAG_NO_CLEAR;
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		updateValuesFromSettings(settings, null);
 		registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -195,12 +204,6 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void showNotification(boolean canInsist) {
 		stopInsist();
-		NotificationManager notifyService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
-		Notification notification = new Notification(
-				R.drawable.battery_low, getString(R.string.low_battery_level_ticker), System.currentTimeMillis()
-		);
-		notification.flags |= Notification.FLAG_NO_CLEAR;
 		Resources resources = getResources();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean shouldInsist = false;
@@ -212,11 +215,17 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			notification.sound = Settings.getAlertRingtone(settings);
 			shouldInsist = true;
 		}
-		notification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), "", contentIntent);
-		notifyService.notify(BATTERY_LOW_NOTIFY_ID, notification);
+		updateNotificationInfo();
 		if (canInsist && shouldInsist) {
 			startInsist();
 		}
+	}
+
+	void updateNotificationInfo() {
+		Log.d(TAG, "updateNotificationInfo: lastBatteryLevel=" + lastBatteryLevel);
+		String contentText = getString(R.string.battery_level_notification_info, lastBatteryLevel);
+		notification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), contentText, notification.contentIntent);
+		notificationService.notify(BATTERY_LOW_NOTIFY_ID, notification);
 	}
 
 	void setInsistInterval(int interval) {

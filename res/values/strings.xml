@@ -2,12 +2,13 @@
 <resources>
 <string name="app_name">Battery Notifier</string>
 <string name="launcher_name">Battery Notifier</string>
-<string name="settings_title">Battery Notifier Settings</string>
-<string name="low_battery_level">Low Battery Level</string>
+<string name="settings_title">Battery Notifier settings</string>
+<string name="low_battery_level">Low battery level</string>
 <string name="low_battery_level_summary">Battery charge level less than or equal to %1$s%% will be notified</string>
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped</string>
-<string name="battery_level_is_low">Battery charge level is low</string>
+<string name="battery_level_is_low">Low battery charge</string>
+<string name="battery_level_notification_info">Remaining charge: %1$d%%</string>
 <string name="vibrate">Vibrate</string>
 <string name="enabled">Enabled</string>
 <string name="sound">Sound</string>
