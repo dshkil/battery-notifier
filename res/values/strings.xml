@@ -8,6 +8,7 @@
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped</string>
 <string name="battery_level_is_low">Low battery charge</string>
+<string name="battery_level_is_full">Battery is fully charged</string>
 <string name="battery_level_notification_info">Remaining charge: %1$d%%</string>
 <string name="vibrate">Vibrate</string>
 <string name="enabled">Enabled</string>
@@ -19,6 +20,7 @@
 <string name="alert_interval">Interval</string>
 <string name="alert_interval_summary">Repeat alert every %1$s</string>
 <string name="low_battery_level_ticker">Battery charge level is getting low...</string>
+<string name="full_battery_level_ticker">Battery charge level became full...</string>
 <string name="alert_ringtone">Alert sound</string>
 <string name="alert_ringtone_summary"></string>
 <string name="miscellaneous">Miscellaneous</string>
