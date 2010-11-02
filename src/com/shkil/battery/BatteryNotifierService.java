@@ -72,11 +72,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					else if (lastBatteryLevel != percent) {
 						lastBatteryLevel = percent;
 						checkBatteryLevel();
-						updateNotificationInfo();
+						if (lastBatteryState == STATE_LOW) {
+							updateNotificationInfo();
+						}
 					}
 					else {
 						lastBatteryState = STATE_UNKNOWN;
-						updateNotificationInfo();
+//						updateNotificationInfo();
 					}
 				}
 			}
