@@ -3,12 +3,14 @@
 
 	<item name="default_low_level" type="string" format="integer">30</item>
 	<item name="default_low_level" type="integer" format="integer">@string/default_low_level</item>
+	<item name="default_notify_full_battery" type="bool" format="boolean">true</item>
 	<item name="default_alert_vibro_on" type="bool" format="boolean">true</item>
 	<item name="default_alert_sound_on" type="bool" format="boolean">true</item>
 	<item name="default_alert_interval" type="string" format="integer">600000</item>
 	<item name="default_alert_interval" type="integer" format="integer">@string/default_alert_interval</item>
 
 	<string-array name="level_titles">
+		<item>Disabled</item>
 		<item>5%</item>
 		<item>10%</item>
 		<item>15%</item>
@@ -22,6 +24,7 @@
 		<item>101% - for testing</item>
 	</string-array>
 	<string-array name="level_values">
+		<item>0</item>
 		<item>5</item>
 		<item>10</item>
 		<item>15</item>

@@ -21,6 +21,26 @@
 	/>
 
 	<CheckBoxPreference
+		android:key="notify_full_battery"
+		android:title="@string/notify_full_battery"
+		android:defaultValue="@bool/default_notify_full_battery"
+		android:dependency="enabled"
+		android:summaryOn="@string/notify_full_battery_is_on"
+		android:summaryOff="@string/notify_full_battery_is_off"
+	/>
+
+	<ListPreference
+		android:key="alert_interval"
+		android:title="@string/alert_interval"
+		android:layout="?android:attr/preferenceLayoutChild"
+		android:entries="@array/interval_titles"
+		android:entryValues="@array/interval_values"
+		android:dependency="enabled"
+		android:dialogTitle="@string/alert_interval"
+		android:defaultValue="@string/default_alert_interval"
+	/>
+
+	<CheckBoxPreference
 		android:key="alert_vibro_on"
 		android:title="@string/vibrate"
 		android:defaultValue="@bool/default_alert_vibro_on"
@@ -46,17 +66,6 @@
 		android:ringtoneType="notification|alarm"
 		android:summary="@string/alert_ringtone_summary"
 		android:dependency="alert_sound_on"
-	/>
-
-	<ListPreference
-		android:key="alert_interval"
-		android:title="@string/alert_interval"
-		android:layout="?android:attr/preferenceLayoutChild"
-		android:entries="@array/interval_titles"
-		android:entryValues="@array/interval_values"
-		android:dependency="enabled"
-		android:dialogTitle="@string/alert_interval"
-		android:defaultValue="@string/default_alert_interval"
 	/>
 
 	<PreferenceCategory android:title="@string/miscellaneous">

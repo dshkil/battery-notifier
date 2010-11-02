@@ -11,7 +11,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-		if (settings.getBoolean(Settings.ENABLED, true)) {
+		if (settings.getBoolean(Settings.SERVICE_ENABLED, true)) {
 			context.startService(new Intent(context, BatteryNotifierService.class));
 		}
 	}

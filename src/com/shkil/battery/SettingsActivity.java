@@ -25,7 +25,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			@Override
 			public void run() {
 				SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
-				if (settings.getBoolean(Settings.ENABLED, true)) {
+				if (settings.getBoolean(Settings.SERVICE_ENABLED, true)) {
 					startService(new Intent(SettingsActivity.this, BatteryNotifierService.class));
 				}
 			}
@@ -55,8 +55,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
-		if (Settings.ENABLED.equals(key)) {
-			if (settings.getBoolean(Settings.ENABLED, true)) {
+		if (Settings.SERVICE_ENABLED.equals(key)) {
+			if (settings.getBoolean(Settings.SERVICE_ENABLED, true)) {
 				startService(new Intent(this, BatteryNotifierService.class));
 			}
 			else {
@@ -72,8 +72,14 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		SharedPreferences settings = preferenceScreen.getSharedPreferences();
 
-		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, "x");
-		String lowLevelSummary = getString(R.string.low_battery_level_summary, lowLevelValue);
+		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, getString(R.string.default_low_level));
+		String lowLevelSummary;
+		if ("0".equals(lowLevelValue)) {
+			lowLevelSummary = getString(R.string.low_battery_level_disabled);
+		}
+		else {
+			lowLevelSummary = getString(R.string.low_battery_level_summary, lowLevelValue);
+		}
 		preferenceScreen.findPreference(Settings.LOW_BATTERY_LEVEL).setSummary(lowLevelSummary);
 
 		ListPreference intervalPreference = (ListPreference) preferenceScreen.findPreference(Settings.ALERT_INTERVAL);

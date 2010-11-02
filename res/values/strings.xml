@@ -5,11 +5,16 @@
 <string name="settings_title">Battery Notifier settings</string>
 <string name="low_battery_level">Low battery level</string>
 <string name="low_battery_level_summary">Battery charge level less than or equal to %1$s%% will be notified</string>
+<string name="low_battery_level_disabled">Low battery charge level will NOT be notified</string>
+<string name="notify_full_battery">Notify when charged</string>
+<string name="notify_full_battery_is_on">Show notification when battery is fully charged</string>
+<string name="notify_full_battery_is_off">Full battery charge will NOT be notified</string>
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped</string>
 <string name="battery_level_is_low">Low battery charge</string>
 <string name="battery_level_is_full">Battery is fully charged</string>
 <string name="battery_level_notification_info">Remaining charge: %1$d%%</string>
+<string name="battery_level_notification_info_ex">Charge: %1$d%% / Unplugged: %2$s</string>
 <string name="vibrate">Vibrate</string>
 <string name="enabled">Enabled</string>
 <string name="sound">Sound</string>
@@ -17,8 +22,8 @@
 <string name="sound_is_off">Alert sound is off</string>
 <string name="vibration_is_on">Vibration is on</string>
 <string name="vibration_is_off">Vibration is off</string>
-<string name="alert_interval">Interval</string>
-<string name="alert_interval_summary">Repeat alert every %1$s</string>
+<string name="alert_interval">Alert interval</string>
+<string name="alert_interval_summary">Repeat low battery charge level alert every %1$s</string>
 <string name="low_battery_level_ticker">Battery charge level is getting low...</string>
 <string name="full_battery_level_ticker">Battery charge level became full...</string>
 <string name="alert_ringtone">Alert sound</string>
