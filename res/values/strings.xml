@@ -5,7 +5,7 @@
 <string name="settings_title">Battery Notifier settings</string>
 <string name="low_battery_level">Low battery level</string>
 <string name="low_battery_level_summary">Battery charge level less than or equal to %1$d%% will be notified</string>
-<string name="low_battery_level_hint">Battery charge levels less than or equal to this will be notified</string>
+<string name="low_battery_level_hint">Battery charge level less than or equal to this will be notified</string>
 <string name="low_battery_level_disabled">Low battery charge level will NOT be notified</string>
 <string name="notify_full_battery">Notify when charged</string>
 <string name="notify_full_battery_is_on">Show notification when battery is fully charged</string>
@@ -27,14 +27,13 @@
 <string name="alert_interval_summary">Repeat low battery charge level alert every %1$s</string>
 <string name="low_battery_level_ticker">Battery charge level is getting low...</string>
 <string name="full_battery_level_ticker">Battery charge level became full...</string>
-<string name="alert_ringtone">Alert sound</string>
-<string name="alert_ringtone_summary"></string>
+<string name="alert_ringtone">Ringtone</string>
+<string name="alert_ringtone_is_default">Default notification sound is used</string>
+<string name="alert_ringtone_is_custom">Custom sound is set</string>
 <string name="miscellaneous">Miscellaneous</string>
 <string name="about">About</string>
 <string name="about_summary">Battery Notifier %1$s</string>
 <string name="about_message">Battery Notifier is intended to notify about low battery charge level</string>
-<string name="alert_ringtone_is_default">Default notification sound is used</string>
-<string name="alert_ringtone_is_custom">Custom sound is set</string>
 <string name="general_options">General options</string>
 <string name="alert_options">Alert options</string>
 </resources>

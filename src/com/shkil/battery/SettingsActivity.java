@@ -114,16 +114,20 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		ListPreference soundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.SOUND_MODE);
 		String sounfModeValue = soundModePreference.getValue();
 		String soundModeSummary;
+		boolean soundEnabled = true;
 		if (String.valueOf(Settings.MODE_ALWAYS).equals(sounfModeValue)) {
 			soundModeSummary = getString(R.string.mode_always_summary);
 		}
 		else if (String.valueOf(Settings.MODE_NEVER).equals(sounfModeValue)) {
 			soundModeSummary = getString(R.string.mode_never_summary);
+			soundEnabled = false;
 		}
 		else {
 			soundModeSummary = getString(R.string.vibro_mode_summary, soundModePreference.getEntry());
 		}
 		soundModePreference.setSummary(soundModeSummary);
+		
+		findPreference(Settings.ALERT_RINGTONE).setEnabled(soundEnabled);
 	}
 
 	protected void updateRingtoneSummary() {

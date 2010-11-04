@@ -65,7 +65,6 @@
 		android:showSilent="false"
 		android:showDefault="true"
 		android:ringtoneType="notification|alarm"
-		android:summary="@string/alert_ringtone_summary"
 		android:layout="?android:attr/preferenceLayoutChild"
 		android:dependency="enabled"
 	/>
