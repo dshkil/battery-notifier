@@ -1,21 +1,26 @@
 package com.shkil.battery;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.provider.Settings.System;
+import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+
+	final Handler handler = new Handler();
+	Preference serviceStatePreference;
+	Preference serviceOptionsPreference;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -23,16 +28,17 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		addPreferencesFromResource(R.xml.settings);
 		updateSummary();
 		updateRingtoneSummary();
-		new Thread() {
+		final PreferenceScreen preferenceScreen = getPreferenceScreen();
+		serviceOptionsPreference = preferenceScreen.findPreference("service_options");
+		serviceStatePreference = preferenceScreen.findPreference("service_state");
+		serviceStatePreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
-			public void run() {
-				SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
-				if (settings.getBoolean(Settings.SERVICE_ENABLED, true)) {
-					startService(new Intent(SettingsActivity.this, BatteryNotifierService.class));
-				}
+			public boolean onPreferenceClick(Preference pref) {
+				toggleServiceStatus();
+				return true;
 			}
-		}.start();
-		Preference aboutPreference = getPreferenceScreen().findPreference("about");
+		});
+		Preference aboutPreference = preferenceScreen.findPreference("about");
 		aboutPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference pref) {
@@ -43,14 +49,31 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
 			aboutPreference.setSummary(getString(R.string.about_summary, info.versionName));
-		} catch (NameNotFoundException e) {
 		}
+		catch (NameNotFoundException e) {
+		}
+		new Thread() {
+			@Override
+			public void run() {
+				SharedPreferences settings = preferenceScreen.getSharedPreferences();
+				if (settings.getBoolean(Settings.START_AT_BOOT, true)) {
+					BatteryNotifierService.start(SettingsActivity.this);
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							updateServiceStatus();
+						}
+					});
+				}
+			}
+		}.start();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		updateRingtoneSummary();
+		updateServiceStatus();
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
 
@@ -62,15 +85,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
-		if (Settings.SERVICE_ENABLED.equals(key)) {
-			if (settings.getBoolean(Settings.SERVICE_ENABLED, true)) {
-				startService(new Intent(this, BatteryNotifierService.class));
-			}
-			else {
-				stopService(new Intent(this, BatteryNotifierService.class));
-			}
-		}
-		else if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)) {
+		if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)) {
 			updateSummary();
 		}
 		else if (Settings.VIBRO_MODE.equals(key) || Settings.SOUND_MODE.equals(key)) {
@@ -126,7 +141,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			soundModeSummary = getString(R.string.vibro_mode_summary, soundModePreference.getEntry());
 		}
 		soundModePreference.setSummary(soundModeSummary);
-		
+
 		findPreference(Settings.ALERT_RINGTONE).setEnabled(soundEnabled);
 	}
 
@@ -150,6 +165,30 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		.setNeutralButton(android.R.string.ok, null)
 		.create()
 		.show();
+	}
+
+	void toggleServiceStatus() {
+		int textId;
+		if (BatteryNotifierService.isRunning(this)) {
+			BatteryNotifierService.stop(this);
+			textId = R.string.service_stopped;
+		}
+		else {
+			BatteryNotifierService.start(this);
+			textId = R.string.service_started;
+		}
+		Toast.makeText(this, textId, Toast.LENGTH_SHORT).show();
+		updateServiceStatus();
+	}
+
+	void updateServiceStatus() {
+		boolean isServiceRunning = BatteryNotifierService.isRunning(this);
+		serviceStatePreference.setTitle(
+			isServiceRunning ? R.string.stop_service : R.string.start_service
+		);
+		int summary = isServiceRunning ? R.string.service_is_running : R.string.service_is_stopped;
+//		serviceOptionsPreference.setSummary(summary);
+		serviceStatePreference.setSummary(summary);
 	}
 
 }

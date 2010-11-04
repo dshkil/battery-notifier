@@ -5,17 +5,24 @@
 	android:title="@string/settings_title">
 
 <PreferenceCategory android:title="@string/general_options">
-	<CheckBoxPreference
-		android:key="enabled"
-		android:title="@string/enabled"
-		android:defaultValue="true"
-		android:summaryOn="@string/service_is_running"
-		android:summaryOff="@string/service_is_stopped"
-	/>
+	<PreferenceScreen
+		android:key="service_options"
+		android:persistent="false"
+		android:title="@string/service_options_title">
+		<Preference
+			android:key="service_state"
+		/>
+		<CheckBoxPreference
+			android:key="start_at_boot"
+			android:title="@string/start_service_at_boot"
+			android:defaultValue="true"
+			android:summaryOn="@string/start_service_at_boot_on"
+			android:summaryOff="@string/start_service_at_boot_off"
+		/>
+	</PreferenceScreen>
 	<org.damazio.notifier.SeekBarPreference
 		android:key="low_battery_level"
 		android:title="@string/low_battery_level"
-		android:dependency="enabled"
 		android:dialogTitle="@string/low_battery_level"
 		android:defaultValue="@integer/default_low_level"
 		app:dialogMessage="@string/low_battery_level_hint"
@@ -25,7 +32,6 @@
 		android:key="notify_full_battery"
 		android:title="@string/notify_full_battery"
 		android:defaultValue="@bool/default_notify_full_battery"
-		android:dependency="enabled"
 		android:summaryOn="@string/notify_full_battery_is_on"
 		android:summaryOff="@string/notify_full_battery_is_off"
 	/>
@@ -37,7 +43,6 @@
 		android:title="@string/alert_interval"
 		android:entries="@array/interval_titles"
 		android:entryValues="@array/interval_values"
-		android:dependency="enabled"
 		android:dialogTitle="@string/alert_interval"
 		android:defaultValue="@string/default_alert_interval"
 	/>
@@ -46,7 +51,6 @@
 		android:title="@string/vibro_mode"
 		android:entries="@array/vibro_mode_titles"
 		android:entryValues="@array/vibro_mode_values"
-		android:dependency="enabled"
 		android:dialogTitle="@string/vibro_mode"
 		android:defaultValue="0"
 	/>
@@ -55,7 +59,6 @@
 		android:title="@string/sound_mode"
 		android:entries="@array/sound_mode_titles"
 		android:entryValues="@array/sound_mode_values"
-		android:dependency="enabled"
 		android:dialogTitle="@string/sound_mode"
 		android:defaultValue="0"
 	/>
@@ -66,7 +69,6 @@
 		android:showDefault="true"
 		android:ringtoneType="notification|alarm"
 		android:layout="?android:attr/preferenceLayoutChild"
-		android:dependency="enabled"
 	/>
 </PreferenceCategory>
 

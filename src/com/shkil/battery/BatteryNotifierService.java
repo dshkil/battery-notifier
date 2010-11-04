@@ -1,5 +1,9 @@
 package com.shkil.battery;
 
+import java.util.List;
+
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,6 +25,7 @@ import android.util.Log;
 
 public class BatteryNotifierService extends Service implements OnSharedPreferenceChangeListener {
 
+	static final String CLASS = BatteryNotifierService.class.getName();
 	static final String TAG = BatteryNotifierService.class.getSimpleName();
 	static final long[] VIBRATE_PATTERN = new long[] {0,50,200,100};
 	static final int BATTERY_LOW_NOTIFY_ID = 1; 
@@ -293,6 +298,26 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		insistTimerActive = false;
 		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		alarmManager.cancel(insistTimerPendingIntent);
+	}
+
+	public static boolean isRunning(Context context) {
+		ActivityManager activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+		List<RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
+		for (RunningServiceInfo serviceInfo : runningServices) {
+			String serviceName = serviceInfo.service.getClassName();
+			if (serviceName.equals(CLASS)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void start(Context context) {
+		context.startService(new Intent(context, BatteryNotifierService.class));
+	}
+	
+	public static void stop(Context context) {
+		context.stopService(new Intent(context, BatteryNotifierService.class));
 	}
 
 }

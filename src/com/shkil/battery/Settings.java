@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class Settings {
 
-	public static final String SERVICE_ENABLED = "service_enabled";
+	public static final String START_AT_BOOT = "start_at_boot";
 	public static final String LOW_BATTERY_LEVEL = "low_battery_level";
 	public static final String NOTIFY_FULL_BATTERY = "notify_full_battery";
 	public static final String ALERT_INTERVAL = "alert_interval";
