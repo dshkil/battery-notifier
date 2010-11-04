@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -38,6 +40,11 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				return true;
 			}
 		});
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+			aboutPreference.setSummary(getString(R.string.about_summary, info.versionName));
+		} catch (NameNotFoundException e) {
+		}
 	}
 
 	@Override
@@ -66,6 +73,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		else if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)) {
 			updateSummary();
 		}
+		else if (Settings.VIBRO_MODE.equals(key) || Settings.SOUND_MODE.equals(key)) {
+			updateSummary();
+		}
 	}
 
 	protected void updateSummary() {
@@ -85,6 +95,34 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		ListPreference intervalPreference = (ListPreference) preferenceScreen.findPreference(Settings.ALERT_INTERVAL);
 		String intervalSummary = getString(R.string.alert_interval_summary, intervalPreference.getEntry());
 		intervalPreference.setSummary(intervalSummary);
+
+		ListPreference vibroModePreference = (ListPreference) preferenceScreen.findPreference(Settings.VIBRO_MODE);
+		String vibroModeValue = vibroModePreference.getValue();
+		String vibroModeSummary;
+		if (String.valueOf(Settings.MODE_ALWAYS).equals(vibroModeValue)) {
+			vibroModeSummary = getString(R.string.mode_always_summary);
+		}
+		else if (String.valueOf(Settings.MODE_NEVER).equals(vibroModeValue)) {
+			vibroModeSummary = getString(R.string.mode_never_summary);
+		}
+		else {
+			vibroModeSummary = getString(R.string.vibro_mode_summary, vibroModePreference.getEntry());
+		}
+		vibroModePreference.setSummary(vibroModeSummary);
+
+		ListPreference soundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.SOUND_MODE);
+		String sounfModeValue = soundModePreference.getValue();
+		String soundModeSummary;
+		if (String.valueOf(Settings.MODE_ALWAYS).equals(sounfModeValue)) {
+			soundModeSummary = getString(R.string.mode_always_summary);
+		}
+		else if (String.valueOf(Settings.MODE_NEVER).equals(sounfModeValue)) {
+			soundModeSummary = getString(R.string.mode_never_summary);
+		}
+		else {
+			soundModeSummary = getString(R.string.vibro_mode_summary, soundModePreference.getEntry());
+		}
+		soundModePreference.setSummary(soundModeSummary);
 	}
 
 	protected void updateRingtoneSummary() {

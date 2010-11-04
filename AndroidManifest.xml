@@ -2,7 +2,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.shkil.battery"
-	android:versionCode="2" android:versionName="0.2">
+	android:versionCode="3" android:versionName="0.2.1">
 
 	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4"></uses-sdk>
 

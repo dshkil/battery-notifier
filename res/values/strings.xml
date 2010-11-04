@@ -15,14 +15,14 @@
 <string name="battery_level_is_full">Battery is fully charged</string>
 <string name="battery_level_notification_info">Remaining charge: %1$d%%</string>
 <string name="battery_level_notification_info_ex">Charge: %1$d%% / Unplugged: %2$s</string>
-<string name="vibrate">Vibrate</string>
 <string name="enabled">Enabled</string>
-<string name="sound">Sound</string>
-<string name="sound_is_on">Alert sound is on</string>
-<string name="sound_is_off">Alert sound is off</string>
-<string name="vibration_is_on">Vibration is on</string>
-<string name="vibration_is_off">Vibration is off</string>
-<string name="alert_interval">Alert interval</string>
+<string name="sound_mode">Sound</string>
+<string name="sound_mode_summary">%1$s</string>
+<string name="vibro_mode">Vibration</string>
+<string name="vibro_mode_summary">%1$s</string>
+<string name="mode_always_summary">Always allowed</string>
+<string name="mode_never_summary">Never allowed</string>
+<string name="alert_interval">Repeat interval</string>
 <string name="alert_interval_summary">Repeat low battery charge level alert every %1$s</string>
 <string name="low_battery_level_ticker">Battery charge level is getting low...</string>
 <string name="full_battery_level_ticker">Battery charge level became full...</string>
@@ -30,8 +30,10 @@
 <string name="alert_ringtone_summary"></string>
 <string name="miscellaneous">Miscellaneous</string>
 <string name="about">About</string>
-<string name="about_summary">About Battery Notifier</string>
+<string name="about_summary">Battery Notifier %1$s</string>
 <string name="about_message">Battery Notifier is intended to notify about low battery charge level</string>
 <string name="alert_ringtone_is_default">Default notification sound is used</string>
 <string name="alert_ringtone_is_custom">Custom sound is set</string>
+<string name="general_options">General options</string>
+<string name="alert_options">Alert options</string>
 </resources>

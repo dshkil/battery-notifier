@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.os.BatteryManager;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -143,11 +144,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void updateValuesFromSettings(SharedPreferences settings, String key) {
 		Log.v(TAG, "Updating values from settings...");
-		if (Settings.ALERT_VIBRO_ON.equals(key) || Settings.ALERT_SOUND_ON.equals(key)) {
+		if (Settings.SOUND_MODE.equals(key) || Settings.VIBRO_MODE.equals(key)) {
 			if (lastBatteryState == STATE_LOW) {
-				Resources resources = getResources();
-				boolean vibrate = settings.getBoolean(Settings.ALERT_VIBRO_ON, resources.getBoolean(R.bool.default_alert_vibro_on));
-				if (vibrate || settings.getBoolean(Settings.ALERT_SOUND_ON, resources.getBoolean(R.bool.default_alert_sound_on))) {
+				if (!Settings.isSoundDisabled(settings) || !Settings.isVibroDisabled(settings)) {
 					if (!insistTimerActive) {
 						startInsist();
 					}
@@ -233,10 +232,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
 			fullBatteryNotification.contentIntent = contentIntent;
 			fullBatteryNotification.flags |= Notification.FLAG_AUTO_CANCEL;
-			if (settings.getBoolean(Settings.ALERT_VIBRO_ON, resources.getBoolean(R.bool.default_alert_vibro_on))) {
+			AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			if (Settings.shouldVibrate(settings, audioManager)) {
 				fullBatteryNotification.vibrate = VIBRATE_PATTERN;
 			}
-			if (settings.getBoolean(Settings.ALERT_SOUND_ON, resources.getBoolean(R.bool.default_alert_sound_on))) {
+			if (Settings.shouldSound(settings, audioManager)) {
 				fullBatteryNotification.sound = Settings.getAlertRingtone(settings);
 			}
 			String contentText = ""; //FIXME
@@ -247,16 +247,14 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void showLowBatteryNotification(boolean canInsist) {
 		stopInsist();
-		Resources resources = getResources();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean shouldInsist = false;
-		if (settings.getBoolean(Settings.ALERT_VIBRO_ON, resources.getBoolean(R.bool.default_alert_vibro_on))) {
+		boolean shouldInsist = !Settings.isVibroDisabled(settings) || !Settings.isSoundDisabled(settings);
+		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		if (Settings.shouldVibrate(settings, audioManager)) {
 			lowBatteryNotification.vibrate = VIBRATE_PATTERN;
-			shouldInsist = true;
 		}
-		if (settings.getBoolean(Settings.ALERT_SOUND_ON, resources.getBoolean(R.bool.default_alert_sound_on))) {
+		if (Settings.shouldSound(settings, audioManager)) {
 			lowBatteryNotification.sound = Settings.getAlertRingtone(settings);
-			shouldInsist = true;
 		}
 		lowBatteryNotification.when = System.currentTimeMillis();
 		updateLowBatteryNotificationInfo();
@@ -266,7 +264,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	void updateLowBatteryNotificationInfo() {
-		Log.d(TAG, "updateNotificationInfo: lastBatteryLevel=" + lastBatteryLevel);
+		Log.d(TAG, "updateLowBatteryNotificationInfo: lastBatteryLevel=" + lastBatteryLevel);
 		String contentText;
 		long unpluggedSince = this.unpluggedSince;
 		if (unpluggedSince == 0) {

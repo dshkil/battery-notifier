@@ -4,8 +4,6 @@
 	<item name="default_low_level" type="string" format="integer">30</item>
 	<item name="default_low_level" type="integer" format="integer">@string/default_low_level</item>
 	<item name="default_notify_full_battery" type="bool" format="boolean">true</item>
-	<item name="default_alert_vibro_on" type="bool" format="boolean">true</item>
-	<item name="default_alert_sound_on" type="bool" format="boolean">true</item>
 	<item name="default_alert_interval" type="string" format="integer">600000</item>
 	<item name="default_alert_interval" type="integer" format="integer">@string/default_alert_interval</item>
 
@@ -60,6 +58,34 @@
 		<item>3600000</item>
 		<item>7200000</item>
 		<item>10800000</item>
+	</string-array>
+
+	<string-array name="sound_mode_titles">
+		<item>Use system settings</item>
+		<item>Always</item>
+		<item>In normal mode only</item>
+		<item>Never</item>
+	</string-array>
+	<string-array name="sound_mode_values">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>2</item>
+	</string-array>
+
+	<string-array name="vibro_mode_titles">
+		<item>Use system settings</item>
+		<item>Always</item>
+		<item>In normal mode only</item>
+		<item>In silent mode only</item>
+		<item>Never</item>
+	</string-array>
+	<string-array name="vibro_mode_values">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>4</item>
+		<item>2</item>
 	</string-array>
 
 </resources>
