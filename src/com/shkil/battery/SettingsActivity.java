@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -19,7 +20,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle(R.string.settings_title);
 		addPreferencesFromResource(R.xml.settings);
 		updateSummary();
 		updateRingtoneSummary();
@@ -81,10 +81,11 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	protected void updateSummary() {
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		SharedPreferences settings = preferenceScreen.getSharedPreferences();
+		Resources resources = getResources();
 
-		String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, getString(R.string.default_low_level));
+		int lowLevelValue = settings.getInt(Settings.LOW_BATTERY_LEVEL, resources.getInteger(R.integer.default_low_level));
 		String lowLevelSummary;
-		if ("0".equals(lowLevelValue)) {
+		if (lowLevelValue == 0) {
 			lowLevelSummary = getString(R.string.low_battery_level_disabled);
 		}
 		else {

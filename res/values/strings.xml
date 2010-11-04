@@ -4,7 +4,8 @@
 <string name="launcher_name">Battery Notifier</string>
 <string name="settings_title">Battery Notifier settings</string>
 <string name="low_battery_level">Low battery level</string>
-<string name="low_battery_level_summary">Battery charge level less than or equal to %1$s%% will be notified</string>
+<string name="low_battery_level_summary">Battery charge level less than or equal to %1$d%% will be notified</string>
+<string name="low_battery_level_hint">Battery charge levels less than or equal to this will be notified</string>
 <string name="low_battery_level_disabled">Low battery charge level will NOT be notified</string>
 <string name="notify_full_battery">Notify when charged</string>
 <string name="notify_full_battery_is_on">Show notification when battery is fully charged</string>

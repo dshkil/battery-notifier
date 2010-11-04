@@ -157,28 +157,21 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			}
 		}
 		else {
+			Resources resources = getResources();
 			if (key == null || Settings.LOW_BATTERY_LEVEL.equals(key)) {
-				try {
-					String lowLevelValue = settings.getString(Settings.LOW_BATTERY_LEVEL, null);
-					if (lowLevelValue == null) {
-						lowLevelValue = getString(R.string.default_low_level);
-					}
-					setLowBatteryLevel(Integer.parseInt(lowLevelValue));
-				}
-				catch (NumberFormatException ex) {
-					setLowBatteryLevel(getResources().getInteger(R.string.default_low_level));
-				}
+				int lowLevelValue = settings.getInt(Settings.LOW_BATTERY_LEVEL, resources.getInteger(R.integer.default_low_level));
+				setLowBatteryLevel(lowLevelValue);
 			}
 			if (key == null || Settings.ALERT_INTERVAL.equals(key)) {
 				try {
 					String intervalValue = settings.getString(Settings.ALERT_INTERVAL, null);
 					if (intervalValue == null) {
-						intervalValue = getString(R.string.default_alert_interval);
+						intervalValue = resources.getString(R.string.default_alert_interval);
 					}
 					setInsistInterval(Integer.parseInt(intervalValue));
 				}
 				catch (NumberFormatException ex) {
-					setInsistInterval(getResources().getInteger(R.string.default_alert_interval));
+					setInsistInterval(resources.getInteger(R.string.default_alert_interval));
 				}
 			}
 		}

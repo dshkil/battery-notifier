@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/com.shkil.battery"
+	android:title="@string/settings_title">
 
 <PreferenceCategory android:title="@string/general_options">
 	<CheckBoxPreference
@@ -9,15 +12,14 @@
 		android:summaryOn="@string/service_is_running"
 		android:summaryOff="@string/service_is_stopped"
 	/>
-	<ListPreference
+	<org.damazio.notifier.SeekBarPreference
 		android:key="low_battery_level"
 		android:title="@string/low_battery_level"
-		android:layout="?android:attr/preferenceLayoutChild"
-		android:entries="@array/level_titles"
-		android:entryValues="@array/level_values"
 		android:dependency="enabled"
 		android:dialogTitle="@string/low_battery_level"
-		android:defaultValue="@string/default_low_level"
+		android:defaultValue="@integer/default_low_level"
+		app:dialogMessage="@string/low_battery_level_hint"
+		app:suffix=" %"
 	/>
 	<CheckBoxPreference
 		android:key="notify_full_battery"
@@ -33,7 +35,6 @@
 	<ListPreference
 		android:key="alert_interval"
 		android:title="@string/alert_interval"
-		android:layout="?android:attr/preferenceLayoutChild"
 		android:entries="@array/interval_titles"
 		android:entryValues="@array/interval_values"
 		android:dependency="enabled"
@@ -43,7 +44,6 @@
 	<ListPreference
 		android:key="vibro_mode"
 		android:title="@string/vibro_mode"
-		android:layout="?android:attr/preferenceLayoutChild"
 		android:entries="@array/vibro_mode_titles"
 		android:entryValues="@array/vibro_mode_values"
 		android:dependency="enabled"
@@ -53,7 +53,6 @@
 	<ListPreference
 		android:key="sound_mode"
 		android:title="@string/sound_mode"
-		android:layout="?android:attr/preferenceLayoutChild"
 		android:entries="@array/sound_mode_titles"
 		android:entryValues="@array/sound_mode_values"
 		android:dependency="enabled"
@@ -67,6 +66,7 @@
 		android:showDefault="true"
 		android:ringtoneType="notification|alarm"
 		android:summary="@string/alert_ringtone_summary"
+		android:layout="?android:attr/preferenceLayoutChild"
 		android:dependency="enabled"
 	/>
 </PreferenceCategory>
