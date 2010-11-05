@@ -25,9 +25,11 @@ import android.util.Log;
 
 public class BatteryNotifierService extends Service implements OnSharedPreferenceChangeListener {
 
-	static final String CLASS = BatteryNotifierService.class.getName();
 	static final String TAG = BatteryNotifierService.class.getSimpleName();
+	static final String CLASS = BatteryNotifierService.class.getName();
+
 	static final long[] VIBRATE_PATTERN = new long[] {0,50,200,100};
+
 	static final int BATTERY_LOW_NOTIFY_ID = 1; 
 	static final int BATTERY_FULL_NOTIFY_ID = 2;
 
@@ -314,10 +316,14 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	public static void start(Context context) {
 		context.startService(new Intent(context, BatteryNotifierService.class));
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		settings.edit().putBoolean(Settings.STARTED, true).commit();
 	}
-	
+
 	public static void stop(Context context) {
 		context.stopService(new Intent(context, BatteryNotifierService.class));
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		settings.edit().putBoolean(Settings.STARTED, false).commit();
 	}
 
 }

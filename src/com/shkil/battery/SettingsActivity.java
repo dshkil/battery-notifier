@@ -29,7 +29,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		updateSummary();
 		updateRingtoneSummary();
 		final PreferenceScreen preferenceScreen = getPreferenceScreen();
-		SharedPreferences settings = preferenceScreen.getSharedPreferences();
 		serviceOptionsPreference = preferenceScreen.findPreference("service_options");
 		serviceStatePreference = preferenceScreen.findPreference("service_state");
 		serviceStatePreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -53,7 +52,15 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 		catch (NameNotFoundException e) {
 		}
-		if (settings.getBoolean(Settings.START_AT_BOOT, true)) {
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		updateRingtoneSummary();
+		SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
+		settings.registerOnSharedPreferenceChangeListener(this);
+		if (settings.getBoolean(Settings.STARTED, true)) {
 			new Thread() {
 				@Override
 				public void run() {
@@ -67,13 +74,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				}
 			}.start();
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		updateRingtoneSummary();
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		updateServiceStatus();
 	}
 
