@@ -12,57 +12,23 @@
 		<attr name="suffix" format="string" />
 	</declare-styleable>
 
-	<string-array name="level_titles">
-		<item>Disabled</item>
-		<item>5%</item>
-		<item>10%</item>
-		<item>15%</item>
-		<item>20%</item>
-		<item>30%</item>
-		<item>40%</item>
-		<item>60%</item>
-		<item>70%</item>
-		<item>80%</item>
-		<item>90%</item>
-		<item>101% - for testing</item>
-	</string-array>
-	<string-array name="level_values">
-		<item>0</item>
-		<item>5</item>
-		<item>10</item>
-		<item>15</item>
-		<item>20</item>
-		<item>30</item>
-		<item>40</item>
-		<item>60</item>
-		<item>70</item>
-		<item>80</item>
-		<item>90</item>
-		<item>101</item>
-	</string-array>
-
 	<string-array name="interval_titles">
 		<item>10 seconds - for testing</item>
-		<item>1 minute</item>
 		<item>5 minutes</item>
 		<item>10 minutes</item>
 		<item>15 minutes</item>
 		<item>25 minutes</item>
-		<item>40 minutes</item>
-		<item>1 hour</item>
-		<item>2 hours</item>
-		<item>3 hours</item>
+		<item>45 minutes</item>
+		<item>90 minutes</item>
 	</string-array>
 	<string-array name="interval_values">
-		<item>10000</item>
-		<item>60000</item>
-		<item>300000</item>
-		<item>600000</item>
-		<item>900000</item>
-		<item>1500000</item>
-		<item>3600000</item>
-		<item>7200000</item>
-		<item>10800000</item>
+		<item>10000</item> <!-- 10 seconds -->
+		<item>300000</item> <!-- 5 minutes -->
+		<item>600000</item> <!-- 10 minutes -->
+		<item>900000</item> <!-- 15 minutes -->
+		<item>1500000</item> <!-- 25 minutes -->
+		<item>2700000</item> <!-- 45 minutes -->
+		<item>5400000</item> <!-- 90 minutes -->
 	</string-array>
 
 	<string-array name="sound_mode_titles">
