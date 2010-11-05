@@ -21,6 +21,10 @@ public class Settings {
 	public static final int MODE_NORMAL_ONLY = 3;
 	public static final int MODE_SILENT_ONLY = 4;
 
+	public static final int SHOULD_SOUND_FALSE = 0;
+	public static final int SHOULD_SOUND_TRUE = 1;
+	public static final int SHOULD_SOUND_SYSTEM = 2;
+
 	public static Uri getAlertRingtone(SharedPreferences settings) {
 		String ringtone = settings.getString(Settings.ALERT_RINGTONE, null);
 		if (ringtone != null) {
@@ -37,25 +41,26 @@ public class Settings {
 		return String.valueOf(MODE_NEVER).equals(settings.getString(VIBRO_MODE, "0"));
 	}
 
-	public static boolean shouldSound(SharedPreferences settings, AudioManager audioManager) {
+	public static int shouldSound(SharedPreferences settings, AudioManager audioManager) {
 		try {
 			int mode = Integer.parseInt(settings.getString(SOUND_MODE, "0"));
 			switch (mode) {
 				case MODE_SYSTEM:
+					return SHOULD_SOUND_SYSTEM;
 				case MODE_NORMAL_ONLY:
-					return audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
+					return audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL ? SHOULD_SOUND_TRUE : SHOULD_SOUND_FALSE;
 				case MODE_ALWAYS:
-					return true;
+					return SHOULD_SOUND_TRUE;
 				case MODE_NEVER:
-					return false;
+					return SHOULD_SOUND_FALSE;
 				case MODE_SILENT_ONLY:
-					return audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT;
+					return audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT ? SHOULD_SOUND_TRUE : SHOULD_SOUND_FALSE;
 			}
 		}
 		catch (Exception ex) {
 			Log.w(Settings.class.getSimpleName(), "", ex);
 		}
-		return false;
+		return SHOULD_SOUND_SYSTEM;
 	}
 
 	public static boolean shouldVibrate(SharedPreferences settings, AudioManager audioManager) {

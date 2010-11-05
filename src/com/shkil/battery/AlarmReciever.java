@@ -14,7 +14,7 @@ import android.util.Log;
 public class AlarmReciever extends BroadcastReceiver {
 
 	private static final String TAG = AlarmReciever.class.getSimpleName();
-	private AsyncPlayer player;
+	private static AsyncPlayer player;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -25,12 +25,14 @@ public class AlarmReciever extends BroadcastReceiver {
 			Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 			vibrator.vibrate(BatteryNotifierService.VIBRATE_PATTERN, -1);
 		}
-		if (Settings.shouldSound(settings, audioManager)) {
+		int shouldSound = Settings.shouldSound(settings, audioManager);
+		if (shouldSound != Settings.SHOULD_SOUND_FALSE) {
 			if (player == null) {
 				player = new AsyncPlayer(TAG);
 			}
 			Uri ringtone = Settings.getAlertRingtone(settings);
-			player.play(context, ringtone, false, AudioManager.STREAM_ALARM);
+			int stream = shouldSound == Settings.SHOULD_SOUND_TRUE ? AudioManager.STREAM_ALARM : AudioManager.STREAM_NOTIFICATION;
+			player.play(context, ringtone, false, stream);
 		}
 	}
 

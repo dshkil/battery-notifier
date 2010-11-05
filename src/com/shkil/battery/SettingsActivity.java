@@ -29,6 +29,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		updateSummary();
 		updateRingtoneSummary();
 		final PreferenceScreen preferenceScreen = getPreferenceScreen();
+		SharedPreferences settings = preferenceScreen.getSharedPreferences();
 		serviceOptionsPreference = preferenceScreen.findPreference("service_options");
 		serviceStatePreference = preferenceScreen.findPreference("service_state");
 		serviceStatePreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -52,11 +53,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 		catch (NameNotFoundException e) {
 		}
-		new Thread() {
-			@Override
-			public void run() {
-				SharedPreferences settings = preferenceScreen.getSharedPreferences();
-				if (settings.getBoolean(Settings.START_AT_BOOT, true)) {
+		if (settings.getBoolean(Settings.START_AT_BOOT, true)) {
+			new Thread() {
+				@Override
+				public void run() {
 					BatteryNotifierService.start(SettingsActivity.this);
 					handler.post(new Runnable() {
 						@Override
@@ -65,16 +65,16 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 						}
 					});
 				}
-			}
-		}.start();
+			}.start();
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		updateRingtoneSummary();
-		updateServiceStatus();
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		updateServiceStatus();
 	}
 
 	@Override
@@ -186,9 +186,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		serviceStatePreference.setTitle(
 			isServiceRunning ? R.string.stop_service : R.string.start_service
 		);
-		int summary = isServiceRunning ? R.string.service_is_running : R.string.service_is_stopped;
-//		serviceOptionsPreference.setSummary(summary);
+		String summary = getString(isServiceRunning ? R.string.service_is_running : R.string.service_is_stopped);
 		serviceStatePreference.setSummary(summary);
+		if (!summary.equals(serviceOptionsPreference.getSummary())) {
+			serviceOptionsPreference.setSummary(summary);
+			onContentChanged(); //Workaround. See http://code.google.com/p/android/issues/detail?id=931
+		}
 	}
 
 }

@@ -234,11 +234,10 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			if (Settings.shouldVibrate(settings, audioManager)) {
 				fullBatteryNotification.vibrate = VIBRATE_PATTERN;
 			}
-			if (Settings.shouldSound(settings, audioManager)) {
+			if (Settings.shouldSound(settings, audioManager) != Settings.SHOULD_SOUND_FALSE) {
 				fullBatteryNotification.sound = Settings.getAlertRingtone(settings);
 			}
-			String contentText = ""; //FIXME
-			fullBatteryNotification.setLatestEventInfo(this, getString(R.string.battery_level_is_full), contentText, contentIntent);
+			fullBatteryNotification.setLatestEventInfo(this, getString(R.string.battery_level_is_full), "", contentIntent);
 			notificationService.notify(BATTERY_FULL_NOTIFY_ID, fullBatteryNotification);
 		}
 	}
@@ -251,7 +250,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (Settings.shouldVibrate(settings, audioManager)) {
 			lowBatteryNotification.vibrate = VIBRATE_PATTERN;
 		}
-		if (Settings.shouldSound(settings, audioManager)) {
+		if (Settings.shouldSound(settings, audioManager) != Settings.SHOULD_SOUND_FALSE) {
 			lowBatteryNotification.sound = Settings.getAlertRingtone(settings);
 		}
 		lowBatteryNotification.when = System.currentTimeMillis();
@@ -276,6 +275,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			contentText = getString(R.string.battery_level_notification_info_ex, lastBatteryLevel, since);
 		}
 		lowBatteryNotification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), contentText, lowBatteryNotification.contentIntent);
+		lowBatteryNotification.icon = lastBatteryLevel > 20 ? R.drawable.battery_almost_low : R.drawable.battery_low;
 		notificationService.notify(BATTERY_LOW_NOTIFY_ID, lowBatteryNotification);
 	}
 
