@@ -3,22 +3,22 @@
 <string name="settings_title">Налаштування Battery Notifier</string>
 <string name="service_options_title">Керування службою</string>
 <string name="start_service_at_boot">Запускати автоматично</string>
-<string name="start_service_at_boot_on">Служба буде запущена автоматично після ввімкнення телефону</string>
+<string name="start_service_at_boot_on">Служба буде запускатися автоматично після увімкнення телефону</string>
 <string name="start_service_at_boot_off">Службу необхідно запускати вручну</string>
 <string name="low_battery_level">Низький заряд батареї</string>
 <string name="low_battery_level_summary">Сповіщати коли заряд батареї не перевищує %1$d%%</string>
 <string name="low_battery_level_hint">Сповіщати коли заряд батареї не перевищує вказаного значення. Вкажіть 0% щоб вимкнути це сповіщення</string>
 <string name="low_battery_level_disabled">Сповіщення про низький заряд батареї вимкнено</string>
 <string name="notify_full_battery">Сповіщати коли заряджений</string>
-<string name="notify_full_battery_is_on">Сповіщати коли батарея повністю заряджена </string>
+<string name="notify_full_battery_is_on">Сповіщати коли батарея повністю заряджена</string>
 <string name="notify_full_battery_is_off">Сповіщення про повний заряд батареї вимкнено</string>
 <string name="start_service">Запустити службу</string>
 <string name="stop_service">Зупинити службу</string>
 <string name="service_started">Службу було запущено</string>
 <string name="service_stopped">Службу було зупинено</string>
 <string name="service_is_running">Служба зараз працює</string>
-<string name="service_is_stopped">Служба зараз зупинена. Сповіщення показуватися НЕ будуть</string>
-<string name="battery_level_is_low">Низький заряд батареі</string>
+<string name="service_is_stopped">Служба зупинена. Сповіщення показуватися НЕ будуть</string>
+<string name="battery_level_is_low">Заряд батареї є низьким</string>
 <string name="battery_level_is_full">Батарея повністю заряджена</string>
 <string name="battery_level_notification_info">Залишок заряду: %1$d%%</string>
 <string name="battery_level_notification_info_ex">Заряд: %1$d%% / Від\'єднано: %2$s</string>
@@ -28,9 +28,9 @@
 <string name="vibro_mode_summary">%1$s</string>
 <string name="mode_always_summary">Завжди дозволено</string>
 <string name="mode_never_summary">Завжди заборонено</string>
-<string name="alert_interval">Інтервал нагадування</string>
+<string name="alert_interval">Інтервал нагадувань</string>
 <string name="alert_interval_summary">Нагадувати про низький заряд батареї кожні %1$s</string>
-<string name="low_battery_level_ticker">Заряд батареї стає низьким...</string>
+<string name="low_battery_level_ticker">Занизький заряд батареї...</string>
 <string name="full_battery_level_ticker">Батарея повністю зарядилася...</string>
 <string name="alert_ringtone">Мелодія</string>
 <string name="alert_ringtone_is_default">Використовується стандартний звук сповіщення</string>
@@ -38,7 +38,7 @@
 <string name="miscellaneous">Інше</string>
 <string name="about">Про програму</string>
 <string name="about_summary">Battery Notifier %1$s</string>
-<string name="about_message">Battery Notifier призначений сповіщати про повний або низький заряд батареї телефону\r\n\r\n\u00A9 2010 Дмитро Шкіль</string>
+<string name="about_message">Battery Notifier призначений для сповіщення про рівень заряду батареї телефону\r\n\r\n\u00A9 2010 Дмитро Шкіль</string>
 <string name="general_options">Загальні налаштування</string>
 <string name="alert_options">Налаштування нагадувань</string>
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string-array name="interval_titles">
+		<item>10 seconds - for testing</item>
+		<item>5 минут</item>
+		<item>10 минут</item>
+		<item>15 минут</item>
+		<item>25 минут</item>
+		<item>45 минут</item>
+		<item>90 минут</item>
+	</string-array>
+	<string-array name="interval_values">
+		<item>10000</item> <!-- 10 seconds -->
+		<item>300000</item> <!-- 5 minutes -->
+		<item>600000</item> <!-- 10 minutes -->
+		<item>900000</item> <!-- 15 minutes -->
+		<item>1500000</item> <!-- 25 minutes -->
+		<item>2700000</item> <!-- 45 minutes -->
+		<item>5400000</item> <!-- 90 minutes -->
+	</string-array>
+
+	<string-array name="sound_mode_titles">
+		<item>Согласно системным установкам</item>
+		<item>Всегда</item>
+		<item>В нормальном режиме</item>
+		<item>Никогда</item>
+	</string-array>
+	<string-array name="sound_mode_values">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>2</item>
+	</string-array>
+
+	<string-array name="vibro_mode_titles">
+		<item>Согласно системным установкам</item>
+		<item>Всегда</item>
+		<item>В нормальном режиме</item>
+		<item>В режиме без звука</item>
+		<item>Никогда</item>
+	</string-array>
+	<string-array name="vibro_mode_values">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>4</item>
+		<item>2</item>
+	</string-array>
+
+</resources>
