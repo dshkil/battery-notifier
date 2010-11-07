@@ -13,6 +13,7 @@ public class Settings {
 	public static final String NOTIFY_FULL_BATTERY = "notify_full_battery";
 	public static final String ALERT_INTERVAL = "alert_interval";
 	public static final String ALERT_RINGTONE = "alert_ringtone";
+	public static final String SHOW_LEVEL_IN_ICON = "show_level_in_icon";
 
 	public static final String SOUND_MODE = "sound_mode";
 	public static final String VIBRO_MODE = "vibro_mode";

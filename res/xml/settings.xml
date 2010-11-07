@@ -73,6 +73,13 @@
 </PreferenceCategory>
 
 <PreferenceCategory android:title="@string/miscellaneous">
+	<CheckBoxPreference
+		android:key="show_level_in_icon"
+		android:title="@string/show_level_in_icon"
+		android:defaultValue="@bool/default_show_level_in_icon"
+		android:summaryOn="@string/show_level_in_icon_on"
+		android:summaryOff="@string/show_level_in_icon_off"
+	/>
 	<Preference
 		android:key="about"
 		android:title="@string/about"

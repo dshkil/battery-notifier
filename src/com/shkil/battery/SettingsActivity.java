@@ -60,7 +60,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		updateRingtoneSummary();
 		SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
 		settings.registerOnSharedPreferenceChangeListener(this);
-		if (settings.getBoolean(Settings.STARTED, true)) {
+		updateServiceStatus(false);
+		if (settings.getBoolean(Settings.STARTED, true) && !BatteryNotifierService.isRunning(this)) {
 			new Thread() {
 				@Override
 				public void run() {
@@ -68,13 +69,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							updateServiceStatus();
+							Toast.makeText(SettingsActivity.this, R.string.service_started, Toast.LENGTH_SHORT).show();
+							updateServiceStatus(false);
 						}
 					});
 				}
 			}.start();
 		}
-		updateServiceStatus();
 	}
 
 	@Override
@@ -178,10 +179,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			textId = R.string.service_started;
 		}
 		Toast.makeText(this, textId, Toast.LENGTH_SHORT).show();
-		updateServiceStatus();
+		updateServiceStatus(true);
 	}
 
-	void updateServiceStatus() {
+	void updateServiceStatus(boolean useWorkaround) {
 		boolean isServiceRunning = BatteryNotifierService.isRunning(this);
 		serviceStatePreference.setTitle(
 			isServiceRunning ? R.string.stop_service : R.string.start_service
@@ -190,7 +191,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		serviceStatePreference.setSummary(summary);
 		if (!summary.equals(serviceOptionsPreference.getSummary())) {
 			serviceOptionsPreference.setSummary(summary);
-			onContentChanged(); //Workaround. See http://code.google.com/p/android/issues/detail?id=931
+			if (useWorkaround) {
+				onContentChanged(); //Workaround. See http://code.google.com/p/android/issues/detail?id=931
+			}
 		}
 	}
 

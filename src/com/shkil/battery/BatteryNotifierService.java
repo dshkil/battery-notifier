@@ -44,6 +44,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	int lastBatteryLevel;
 	long unpluggedSince;
 
+	SharedPreferences settings;
 	NotificationManager notificationService;
 	Notification lowBatteryNotification;
 	PendingIntent insistTimerPendingIntent;
@@ -102,7 +103,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 						}
 						checkBatteryLevel();
 						if (lastBatteryState == STATE_LOW) {
-							updateLowBatteryNotificationInfo();
+							updateLowBatteryNotificationInfo(true);
 						}
 					}
 				}
@@ -121,7 +122,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		);
 		lowBatteryNotification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
 		lowBatteryNotification.flags |= Notification.FLAG_NO_CLEAR;
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		updateValuesFromSettings(settings, null);
 		registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		settings.registerOnSharedPreferenceChangeListener(this);
@@ -134,7 +135,6 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		stopInsist();
 		NotificationManager notifyService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notifyService.cancelAll();
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.unregisterOnSharedPreferenceChangeListener(this);
 	}
 
@@ -151,7 +151,12 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void updateValuesFromSettings(SharedPreferences settings, String key) {
 		Log.v(TAG, "Updating values from settings...");
-		if (Settings.SOUND_MODE.equals(key) || Settings.VIBRO_MODE.equals(key)) {
+		if (Settings.SHOW_LEVEL_IN_ICON.equals(key)) {
+			if (lastBatteryState == STATE_LOW) {
+				updateLowBatteryNotificationInfo(true);
+			}
+		}
+		else if (Settings.SOUND_MODE.equals(key) || Settings.VIBRO_MODE.equals(key)) {
 			if (lastBatteryState == STATE_LOW) {
 				if (!Settings.isSoundDisabled(settings) || !Settings.isVibroDisabled(settings)) {
 					if (!insistTimerActive) {
@@ -222,7 +227,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void onBatteryFull() {
 		Log.d(TAG, "Battery became full");
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences settings = this.settings;
 		Resources resources = getResources();
 		boolean notifyFullBattery = resources.getBoolean(R.bool.default_notify_full_battery);
 		if (settings.getBoolean(Settings.NOTIFY_FULL_BATTERY, notifyFullBattery)) {
@@ -246,7 +251,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	void showLowBatteryNotification(boolean canInsist) {
 		stopInsist();
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences settings = this.settings;
 		boolean shouldInsist = !Settings.isVibroDisabled(settings) || !Settings.isSoundDisabled(settings);
 		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		if (Settings.shouldVibrate(settings, audioManager)) {
@@ -256,13 +261,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			lowBatteryNotification.sound = Settings.getAlertRingtone(settings);
 		}
 		lowBatteryNotification.when = System.currentTimeMillis();
-		updateLowBatteryNotificationInfo();
+		updateLowBatteryNotificationInfo(false);
 		if (canInsist && shouldInsist) {
 			startInsist();
 		}
 	}
 
-	void updateLowBatteryNotificationInfo() {
+	void updateLowBatteryNotificationInfo(boolean makeSilent) {
 		Log.d(TAG, "updateLowBatteryNotificationInfo: lastBatteryLevel=" + lastBatteryLevel);
 		String contentText;
 		long unpluggedSince = this.unpluggedSince;
@@ -276,8 +281,25 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			);
 			contentText = getString(R.string.battery_level_notification_info_ex, lastBatteryLevel, since);
 		}
+		Notification lowBatteryNotification = this.lowBatteryNotification;
 		lowBatteryNotification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), contentText, lowBatteryNotification.contentIntent);
 		lowBatteryNotification.icon = lastBatteryLevel > 20 ? R.drawable.battery_almost_low : R.drawable.battery_low;
+		if (settings.getBoolean(Settings.SHOW_LEVEL_IN_ICON, getResources().getBoolean(R.bool.default_show_level_in_icon))) {
+			if (lowBatteryNotification.number == 0) {
+				notificationService.cancel(BATTERY_LOW_NOTIFY_ID);
+			}
+			lowBatteryNotification.number = lastBatteryLevel;
+		}
+		else {
+			if (lowBatteryNotification.number > 0) {
+				notificationService.cancel(BATTERY_LOW_NOTIFY_ID);
+			}
+			lowBatteryNotification.number = 0;
+		}
+		if (makeSilent) {
+			lowBatteryNotification.sound = null;
+			lowBatteryNotification.vibrate = null;
+		}
 		notificationService.notify(BATTERY_LOW_NOTIFY_ID, lowBatteryNotification);
 	}
 

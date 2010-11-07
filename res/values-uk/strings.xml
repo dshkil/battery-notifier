@@ -41,4 +41,7 @@
 <string name="about_message">Battery Notifier призначений для сповіщення про рівень заряду батареї телефону\r\n\r\n\u00A9 2010 Дмитро Шкіль</string>
 <string name="general_options">Загальні налаштування</string>
 <string name="alert_options">Налаштування нагадувань</string>
+<string name="show_level_in_icon">Іконка з рівнем заряду</string>
+<string name="show_level_in_icon_on">Показувати рівень на іконці сповіщення про низький заряд батареї</string>
+<string name="show_level_in_icon_off">Не показувати рівень на іконці сповіщення про низький заряд батареї</string>
 </resources>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<item name="default_low_level" type="integer" format="integer">30</item>
+	<item name="default_low_level" type="integer" format="integer">25</item>
 	<item name="default_notify_full_battery" type="bool" format="boolean">true</item>
 	<item name="default_alert_interval" type="string" format="integer">600000</item>
 	<item name="default_alert_interval" type="integer" format="integer">@string/default_alert_interval</item>
+	<item name="default_show_level_in_icon" type="bool" format="boolean">false</item>
 	
 	<declare-styleable name="SeekBarPreference">
 		<attr name="max" format="integer" />
