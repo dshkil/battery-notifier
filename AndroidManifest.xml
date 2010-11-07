@@ -6,7 +6,7 @@
 
 	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="7"></uses-sdk>
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false">
         <activity
 			android:name=".SettingsActivity"
 			android:label="@string/launcher_name"
