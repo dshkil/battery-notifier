@@ -16,8 +16,8 @@
 <string name="notify_full_battery_is_off">Full battery charge will NOT be notified</string>
 <string name="start_service">Start service</string>
 <string name="stop_service">Stop service</string>
-<string name="service_started">Service started</string>
-<string name="service_stopped">Service stopped</string>
+<string name="service_started">Service has been started</string>
+<string name="service_stopped">Service has been stopped</string>
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped. Notifications will NOT be shown</string>
 <string name="battery_level_is_low">Low battery charge</string>
