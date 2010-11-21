@@ -3,6 +3,7 @@
 
 	<item name="default_low_level" type="integer" format="integer">25</item>
 	<item name="default_notify_full_battery" type="bool" format="boolean">true</item>
+	<item name="default_always_show_icon" type="bool" format="boolean">true</item>
 	<item name="default_alert_interval" type="string" format="integer">600000</item>
 	<item name="default_alert_interval" type="integer" format="integer">@string/default_alert_interval</item>
 	<item name="default_show_level_in_icon" type="bool" format="boolean">false</item>

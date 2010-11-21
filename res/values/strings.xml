@@ -46,4 +46,7 @@
 <string name="show_level_in_icon">Show level in the icon</string>
 <string name="show_level_in_icon_on">Remaining charge level will be shown in the status bar icon</string>
 <string name="show_level_in_icon_off">Remaining charge level will NOT be shown in the status bar icon</string>
+<string name="always_show_icon">Always show notification</string>
+<string name="always_show_icon_on"></string>
+<string name="always_show_icon_off"></string>
 </resources>

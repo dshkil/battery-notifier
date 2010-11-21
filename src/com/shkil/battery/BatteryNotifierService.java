@@ -1,5 +1,7 @@
 package com.shkil.battery;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -30,8 +32,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	static final long[] VIBRATE_PATTERN = new long[] {0,50,200,100};
 
-	static final int BATTERY_LOW_NOTIFY_ID = 1; 
-	static final int BATTERY_FULL_NOTIFY_ID = 2;
+	static final int NOTIFY_ID = 1;
+	static final int BATTERY_LOW_NOTIFY_ID = 2;
+	static final int BATTERY_FULL_NOTIFY_ID = 3;
 
 	static final int STATE_UNKNOWN = 0;
 	static final int STATE_OKAY = 1;
@@ -49,6 +52,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	Notification lowBatteryNotification;
 	PendingIntent insistTimerPendingIntent;
 	boolean insistTimerActive;
+	
+	private Method startForegroundMethod;
+	private Method stopForegroundMethod;
 
 	final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
 		private int lastRawLevel;
@@ -117,6 +123,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		Intent alarmRecieverIntent = new Intent(this, AlarmReciever.class);
 		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, alarmRecieverIntent, 0);
 		notificationService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		try {
+			startForegroundMethod = getClass().getMethod("startForeground", new Class[] {int.class, Notification.class});
+			stopForegroundMethod = getClass().getMethod("stopForeground", new Class[] {boolean.class});
+		}
+		catch (NoSuchMethodException e) {
+			startForegroundMethod = stopForegroundMethod = null;
+		}
 		lowBatteryNotification = new Notification(
 			R.drawable.battery_low, getString(R.string.low_battery_level_ticker), System.currentTimeMillis()
 		);
@@ -133,9 +146,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		Log.i(TAG, "onDestroy");
 		unregisterReceiver(batteryInfoReceiver);
 		stopInsist();
-		NotificationManager notifyService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		notifyService.cancelAll();
+		notificationService.cancelAll();
 		settings.unregisterOnSharedPreferenceChangeListener(this);
+		stopForegroundCompat(NOTIFY_ID);
 	}
 
 	@Override
@@ -283,7 +296,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 		Notification lowBatteryNotification = this.lowBatteryNotification;
 		lowBatteryNotification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), contentText, lowBatteryNotification.contentIntent);
-		lowBatteryNotification.icon = lastBatteryLevel > 20 ? R.drawable.battery_almost_low : R.drawable.battery_low;
+		lowBatteryNotification.icon = getBatteryIcon(lastBatteryLevel);
 		if (settings.getBoolean(Settings.SHOW_LEVEL_IN_ICON, getResources().getBoolean(R.bool.default_show_level_in_icon))) {
 			if (lowBatteryNotification.number == 0) {
 				notificationService.cancel(BATTERY_LOW_NOTIFY_ID);
@@ -347,5 +360,58 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 		settings.edit().putBoolean(Settings.STARTED, false).commit();
 	}
+	
+	public static int getBatteryIcon(int level) {
+		return level > 20 ? R.drawable.battery_almost_low : R.drawable.battery_low;
+	}
+
+	/**
+	 * This is a wrapper around the new startForeground method, using the older
+	 * APIs if it is not available.
+	 */
+	void startForegroundCompat(int id, Notification notification) {
+		// If we have the new startForeground API, then use it.
+		if (startForegroundMethod != null) {
+			try {
+				startForegroundMethod.invoke(this, new Object[] {Integer.valueOf(id), notification});
+			}
+			catch (InvocationTargetException e) {
+				Log.w(TAG, "Unable to invoke startForeground", e);
+			}
+			catch (IllegalAccessException e) {
+				Log.w(TAG, "Unable to invoke startForeground", e);
+			}
+		}
+		else { // Fall back on the old API.
+			setForeground(true);
+			notificationService.notify(id, notification);
+		}
+	}
+
+	/**
+	 * This is a wrapper around the new stopForeground method, using the older
+	 * APIs if it is not available.
+	 */
+	void stopForegroundCompat(int id) {
+		// If we have the new stopForeground API, then use it.
+		if (stopForegroundMethod != null) {
+			try {
+				stopForegroundMethod.invoke(this, new Object[] {Boolean.TRUE});
+			}
+			catch (InvocationTargetException e) {
+				Log.w(TAG, "Unable to invoke stopForeground", e);
+			}
+			catch (IllegalAccessException e) {
+				Log.w(TAG, "Unable to invoke stopForeground", e);
+			}
+		}
+		else {
+			// Fall back on the old API.  Note to cancel BEFORE changing the
+			// foreground state, since we could be killed at that point.
+			notificationService.cancel(id);
+			setForeground(false);
+		}
+	}
+
 
 }

@@ -19,6 +19,13 @@
 			android:summaryOn="@string/start_service_at_boot_on"
 			android:summaryOff="@string/start_service_at_boot_off"
 		/>
+		<CheckBoxPreference
+			android:key="always_show_icon"
+			android:title="@string/always_show_icon"
+			android:defaultValue="@bool/default_always_show_icon"
+			android:summaryOn="@string/always_show_icon_on"
+			android:summaryOff="@string/always_show_icon_off"
+		/>
 	</PreferenceScreen>
 	<org.damazio.notifier.SeekBarPreference
 		android:key="low_battery_level"
