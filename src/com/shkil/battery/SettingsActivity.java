@@ -89,7 +89,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)) {
 			updateSummary();
 		}
-		else if (Settings.VIBRO_MODE.equals(key) || Settings.SOUND_MODE.equals(key)) {
+		else if (Settings.LOW_CHARGE_VIBRO_MODE.equals(key) || Settings.LOW_CHARGE_SOUND_MODE.equals(key)) {
 			updateSummary();
 		}
 	}
@@ -113,7 +113,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		String intervalSummary = getString(R.string.alert_interval_summary, intervalPreference.getEntry());
 		intervalPreference.setSummary(intervalSummary);
 
-		ListPreference vibroModePreference = (ListPreference) preferenceScreen.findPreference(Settings.VIBRO_MODE);
+		ListPreference vibroModePreference = (ListPreference) preferenceScreen.findPreference(Settings.LOW_CHARGE_VIBRO_MODE);
 		String vibroModeValue = vibroModePreference.getValue();
 		String vibroModeSummary;
 		if (String.valueOf(Settings.MODE_ALWAYS).equals(vibroModeValue)) {
@@ -127,7 +127,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 		vibroModePreference.setSummary(vibroModeSummary);
 
-		ListPreference soundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.SOUND_MODE);
+		ListPreference soundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.LOW_CHARGE_SOUND_MODE);
 		String sounfModeValue = soundModePreference.getValue();
 		String soundModeSummary;
 		boolean soundEnabled = true;

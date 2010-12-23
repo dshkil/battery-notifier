@@ -16,8 +16,11 @@ public class Settings {
 	public static final String ALERT_RINGTONE = "alert_ringtone";
 	public static final String SHOW_LEVEL_IN_ICON = "show_level_in_icon";
 
-	public static final String SOUND_MODE = "sound_mode";
-	public static final String VIBRO_MODE = "vibro_mode";
+	public static final String LOW_CHARGE_SOUND_MODE = "sound_mode";
+	public static final String LOW_CHARGE_VIBRO_MODE = "vibro_mode";
+	public static final String FULL_CHARGE_SOUND_MODE = "full_charge_sound_mode";
+	public static final String FULL_CHARGE_VIBRO_MODE = "full_charge_vibro_mode";
+
 	public static final int MODE_SYSTEM = 0;
 	public static final int MODE_ALWAYS = 1;
 	public static final int MODE_NEVER = 2;
@@ -28,6 +31,8 @@ public class Settings {
 	public static final int SHOULD_SOUND_TRUE = 1;
 	public static final int SHOULD_SOUND_SYSTEM = 2;
 
+	private static final String MODE_NEVER_STR = String.valueOf(MODE_NEVER);
+
 	public static Uri getAlertRingtone(SharedPreferences settings) {
 		String ringtone = settings.getString(Settings.ALERT_RINGTONE, null);
 		if (ringtone != null) {
@@ -36,17 +41,13 @@ public class Settings {
 		return android.provider.Settings.System.DEFAULT_NOTIFICATION_URI;
 	}
 
-	public static boolean isSoundDisabled(SharedPreferences settings) {
-		return String.valueOf(MODE_NEVER).equals(settings.getString(SOUND_MODE, "0"));
+	public static boolean isAlarmDisabled(String soundModeKey, String vibroModeKey, SharedPreferences settings) {
+		return MODE_NEVER_STR.equals(settings.getString(soundModeKey, null)) && MODE_NEVER_STR.equals(settings.getString(vibroModeKey, null));
 	}
 
-	public static boolean isVibroDisabled(SharedPreferences settings) {
-		return String.valueOf(MODE_NEVER).equals(settings.getString(VIBRO_MODE, "0"));
-	}
-
-	public static int shouldSound(SharedPreferences settings, AudioManager audioManager) {
+	public static int shouldSound(String soundModeKey, SharedPreferences settings, AudioManager audioManager) {
 		try {
-			int mode = Integer.parseInt(settings.getString(SOUND_MODE, "0"));
+			int mode = Integer.parseInt(settings.getString(soundModeKey, "0"));
 			switch (mode) {
 				case MODE_SYSTEM:
 					return SHOULD_SOUND_SYSTEM;
@@ -66,9 +67,9 @@ public class Settings {
 		return SHOULD_SOUND_SYSTEM;
 	}
 
-	public static boolean shouldVibrate(SharedPreferences settings, AudioManager audioManager) {
+	public static boolean shouldVibrate(String vibroModeKey, SharedPreferences settings, AudioManager audioManager) {
 		try {
-			int mode = Integer.parseInt(settings.getString(VIBRO_MODE, "0"));
+			int mode = Integer.parseInt(settings.getString(vibroModeKey, "0"));
 			switch (mode) {
 				case MODE_SYSTEM:
 					return audioManager.shouldVibrate(AudioManager.VIBRATE_TYPE_NOTIFICATION);
