@@ -40,6 +40,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	static final int STATE_CHARGING = 3;
 	static final int STATE_FULL = 4;
 
+	static final int SINCE_TIME_FORMAT = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH;
+
 	// Cached settings values
 	int lowBatteryLevel;
 	int insistInterval;
@@ -54,6 +56,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	SharedPreferences settings;
 	NotificationManager notificationService;
 	Notification notification;
+	boolean notificationVisible;
 	PendingIntent insistTimerPendingIntent;
 	boolean insistTimerActive;
 
@@ -88,10 +91,14 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					setBatteryState(isPlugged ? STATE_FULL : STATE_OKAY, false);
 				}
 				else {
-					if (levelChanged) {
-						setBatteryLevel(level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100));
-					}
 					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
+						if (levelChanged) {
+							boolean wasZeroLevel = batteryLevel == 0;
+							batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+							if (wasZeroLevel && showLevelInIcon) {
+								notification.number = batteryLevel;
+							}
+						}
 						if (statusChanged) {
 							unpluggedSince = 0;
 							setBatteryState(STATE_CHARGING, false);
@@ -102,9 +109,17 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 						if (statusChanged && (oldBatteryState == STATE_CHARGING || oldBatteryState == STATE_FULL)) {
 							unpluggedSince = System.currentTimeMillis();
 						}
-						int newBatteryState = checkBatteryLevel();
-						if (levelChanged && oldBatteryState == STATE_LOW && newBatteryState == STATE_LOW) {
-							updateLowBatteryNotificationInfo();
+						if (levelChanged) {
+							batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+							checkBatteryLevel();
+							if (notificationVisible) {
+//								updateLevelInIcon();
+								notification.number = showLevelInIcon ? batteryLevel : 0;
+								updateNotification();
+							}
+						}
+						else {
+							checkBatteryLevel();
 						}
 					}
 				}
@@ -112,18 +127,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 	};	
 
-	/**
-	 * @return battery state
-	 */
-	int checkBatteryLevel() {
+	void checkBatteryLevel() {
 		Log.d(TAG, "checkBatteryLevel(): batteryState=" + batteryState);
 		if (batteryLevel > lowBatteryLevel || lowBatteryLevel == 0) {
 			setBatteryState(STATE_OKAY, false);
-			return STATE_OKAY;
 		}
 		else {
 			setBatteryState(STATE_LOW, false);
-			return STATE_LOW;
 		}
 	}
 
@@ -187,7 +197,10 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			}
 			if (key == null || Settings.SHOW_LEVEL_IN_ICON.equals(key)) {
 				showLevelInIcon = settings.getBoolean(Settings.SHOW_LEVEL_IN_ICON, resources.getBoolean(R.bool.default_show_level_in_icon));
-				updateLevelInIcon();
+				if (notificationVisible) {
+					updateLevelInIcon();
+					showNotification(notification);
+				}
 			}
 			if (key == null || Settings.LOW_BATTERY_LEVEL.equals(key)) {
 				int lowLevelValue = settings.getInt(Settings.LOW_BATTERY_LEVEL, resources.getInteger(R.integer.default_low_level));
@@ -308,13 +321,18 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 	}
 
-	public static int getBatteryIcon(int level) {
+	public static int getBatteryIcon(int state, int level) {
 		return level > 20 ? R.drawable.battery_almost_low : R.drawable.battery_low;
 	}
 
-	void setBatteryLevel(int level) {
-		this.batteryLevel = level;
-		updateLevelInIcon();
+	private void showNotification(Notification notification) {
+		startForegroundCompat(NOTIFICATION_ID, notification);
+		notificationVisible = true;
+	}
+
+	private void hideNotification() {
+		notificationVisible = false;
+		stopForegroundCompat(NOTIFICATION_ID);
 	}
 
 	void updateLevelInIcon() {
@@ -329,37 +347,39 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			hideNotification();
 			notification.number = 0;
 		}
-		boolean isNotificationVisible = alwaysShowNotification || batteryState == STATE_LOW; //FIXME how about full battery?
-		if (isNotificationVisible) {
-			showNotification(notification);
-		}
 	}
 
-	void setBatteryState(int state, boolean force) {
+	void setBatteryState(int state, boolean settingsChanged) {
 		boolean stateChanged = this.batteryState != state;  
-		if (stateChanged || force) {
-			if (insistTimerActive) {
-				stopInsist();
+		if (stateChanged || settingsChanged) {
+			if (stateChanged) {
+				this.batteryState = state;
+				Log.d(TAG, "Battery state became " + state);
+				if (insistTimerActive) {
+					stopInsist();
+				}
 			}
-			this.batteryState = state;
 			Notification notification = this.notification;
 			notification.when = System.currentTimeMillis();
 			notification.flags = DEFAULT_NOTIFICATION_FLAGS;
 			switch (state) {
 				case STATE_LOW: {
 					if (stateChanged) {
-						Log.d(TAG, "Battery became low");
-						onBatteryLow();
+						notification.tickerText = getString(R.string.low_battery_level_ticker);
+						updateNotification();
+						SharedPreferences settings = this.settings;
+						playAlert();
+						boolean shouldInsist = !Settings.isVibroDisabled(settings) || !Settings.isSoundDisabled(settings);
+						if (shouldInsist) {
+							startInsist();
+						}
 					}
 					break;
 				}
 				case STATE_CHARGING: {
-					Log.d(TAG, "Battery starts charging");
 					if (alwaysShowNotification) {
-						notification.icon = getBatteryIcon(batteryLevel);
 						notification.tickerText = null;
-						notification.setLatestEventInfo(this, "Battery status", "Battery is charging", notification.contentIntent); //FIXME
-						showNotification(notification);
+						updateNotification();
 					}
 					else {
 						hideNotification();
@@ -367,12 +387,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					break;
 				}
 				case STATE_OKAY: {
-					Log.d(TAG, "Battery became okay");
 					if (alwaysShowNotification) {
-						notification.icon = getBatteryIcon(batteryLevel);
 						notification.tickerText = null;
-						notification.setLatestEventInfo(this, "Battery status", "Battery level is ok", notification.contentIntent); //FIXME
-						showNotification(notification);
+						updateNotification();
 					}
 					else {
 						hideNotification();
@@ -380,90 +397,82 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					break;
 				}
 				case STATE_FULL: {
-					Log.d(TAG, "Battery became full");
-					onBatteryFull();
+					SharedPreferences settings = this.settings;
+					boolean defaultNotifyFullBattery = getResources().getBoolean(R.bool.default_notify_full_battery);
+					boolean notifyFullBattery = settings.getBoolean(Settings.NOTIFY_FULL_BATTERY, defaultNotifyFullBattery);
+					if (notifyFullBattery || alwaysShowNotification) {
+						notification.tickerText = getString(R.string.full_battery_level_ticker);
+						if (!alwaysShowNotification) {
+							notification.flags &= ~Notification.FLAG_NO_CLEAR;
+							notification.flags |= Notification.FLAG_AUTO_CANCEL;
+						}
+						updateNotification();
+						if (notifyFullBattery) {
+							playAlert();
+						}
+					}
+					else {
+						hideNotification();
+					}
 					break;
 				}
 			}
 		}
 	}
 
-	private void showNotification(Notification notification) {
-		startForegroundCompat(NOTIFICATION_ID, notification);
-	}
-
-	private void hideNotification() {
-		stopForegroundCompat(NOTIFICATION_ID);
-	}
-
-	private void onBatteryLow() {
-		updateLowBatteryNotificationInfo();
-		notification.tickerText = getString(R.string.low_battery_level_ticker);
+	void updateNotification() {
+		Notification notification = this.notification;
+		switch (batteryState) {
+			case STATE_LOW: {
+				notification.icon = getBatteryIcon(STATE_LOW, batteryLevel);
+				String contentText;
+				long unpluggedSince = this.unpluggedSince;
+				if (unpluggedSince == 0) {
+					contentText = getString(R.string.battery_level_notification_info, batteryLevel);
+				}
+				else {
+					String since = DateUtils.formatDateTime(this, unpluggedSince, SINCE_TIME_FORMAT);
+					contentText = getString(R.string.battery_level_notification_info_ex, batteryLevel, since);
+				}
+				notification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), contentText, notification.contentIntent);
+				break;
+			}
+			case STATE_CHARGING: {
+				notification.icon = getBatteryIcon(STATE_CHARGING, batteryLevel);
+				notification.setLatestEventInfo(this, "Battery status", "Battery is charging: " + batteryLevel, notification.contentIntent); //FIXME
+				break;
+			}
+			case STATE_OKAY: {
+				notification.icon = getBatteryIcon(STATE_OKAY, batteryLevel);
+				String contentText;
+				long unpluggedSince = this.unpluggedSince;
+				if (unpluggedSince == 0) {
+					contentText = getString(R.string.battery_level_notification_info, batteryLevel);
+				}
+				else {
+					String since = DateUtils.formatDateTime(this, unpluggedSince, SINCE_TIME_FORMAT);
+					contentText = getString(R.string.battery_level_notification_info_ex, batteryLevel, since);
+				}
+				notification.setLatestEventInfo(this, "Battery level is okay", contentText, notification.contentIntent); //FIXME
+				break;
+			}
+			case STATE_FULL: {
+				notification.icon = R.drawable.battery_full;
+				notification.setLatestEventInfo(this, getString(R.string.battery_level_is_full), "", notification.contentIntent);
+				break;
+			}
+		}
 		showNotification(notification);
-		SharedPreferences settings = this.settings;
-		boolean shouldInsist = !Settings.isVibroDisabled(settings) || !Settings.isSoundDisabled(settings);
+	}
+
+	void playAlert() {
 		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		if (Settings.shouldVibrate(settings, audioManager)) {
-			// notification.vibrate = VIBRATE_PATTERN;
+			// fullBatteryNotification.vibrate = VIBRATE_PATTERN;
 		}
 		if (Settings.shouldSound(settings, audioManager) != Settings.SHOULD_SOUND_FALSE) {
-			// notification.sound = Settings.getAlertRingtone(settings);
+			// fullBatteryNotification.sound = Settings.getAlertRingtone(settings);
 		}
-		if (shouldInsist) {
-			startInsist();
-		}
-	}
-
-	private void onBatteryFull() {
-		SharedPreferences settings = this.settings;
-		boolean notify;
-		if (alwaysShowNotification) {
-			notify = true;
-		}
-		else {
-			boolean defaultNotifyFullBattery = getResources().getBoolean(R.bool.default_notify_full_battery);
-			notify = settings.getBoolean(Settings.NOTIFY_FULL_BATTERY, defaultNotifyFullBattery);
-		}
-		if (notify) {
-			Notification notification = this.notification;
-			notification.icon = R.drawable.battery_full;
-			notification.tickerText = getString(R.string.full_battery_level_ticker);
-			notification.setLatestEventInfo(this, getString(R.string.battery_level_is_full), "", notification.contentIntent);
-			if (!alwaysShowNotification) {
-				notification.flags &= ~Notification.FLAG_NO_CLEAR;
-				notification.flags |= Notification.FLAG_AUTO_CANCEL;
-			}
-			showNotification(notification);
-			AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			if (Settings.shouldVibrate(settings, audioManager)) {
-				// fullBatteryNotification.vibrate = VIBRATE_PATTERN;
-			}
-			if (Settings.shouldSound(settings, audioManager) != Settings.SHOULD_SOUND_FALSE) {
-				// fullBatteryNotification.sound = Settings.getAlertRingtone(settings);
-			}
-		}
-		else {
-			hideNotification();
-		}
-	}
-
-	void updateLowBatteryNotificationInfo() {
-		Log.d(TAG, "updateLowBatteryNotificationInfo: batteryLevel=" + batteryLevel);
-		String contentText;
-		long unpluggedSince = this.unpluggedSince;
-		if (unpluggedSince == 0) {
-			contentText = getString(R.string.battery_level_notification_info, batteryLevel);
-		}
-		else {
-			String since = DateUtils.formatDateTime(this,
-				unpluggedSince,
-				DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH
-			);
-			contentText = getString(R.string.battery_level_notification_info_ex, batteryLevel, since);
-		}
-		Notification notification = this.notification;
-		notification.setLatestEventInfo(this, getString(R.string.battery_level_is_low), contentText, notification.contentIntent);
-		notification.icon = getBatteryIcon(batteryLevel);
 	}
 
 }
