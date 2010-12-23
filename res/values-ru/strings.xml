@@ -23,9 +23,7 @@
 <string name="battery_level_notification_info">Оставшийся заряд: %1$d%%</string>
 <string name="battery_level_notification_info_ex">Заряд: %1$d%% / Отключено: %2$s</string>
 <string name="sound_mode">Звук</string>
-<string name="sound_mode_summary">%1$s</string>
 <string name="vibro_mode">Вибрация</string>
-<string name="vibro_mode_summary">%1$s</string>
 <string name="mode_always_summary">Всегда разрешено</string>
 <string name="mode_never_summary">Всегда запрещено</string>
 <string name="alert_interval">Интервал напоминаний</string>
@@ -40,7 +38,8 @@
 <string name="about_summary">Battery Notifier %1$s</string>
 <string name="about_message">Battery Notifier предназначен для оповещения о уровне заряда батареи телефона\r\n\r\n\u00A9 2010 Дмитрий Шкиль</string>
 <string name="general_options">Общие настройки</string>
-<string name="alert_options">Настройки оповещений</string>
+<string name="low_battery_options">Настройки оповещений о низком заряде</string>
+<string name="full_battery_options">Full charge level options</string>
 <string name="show_level_in_icon">Иконка с уровнем заряда</string>
 <string name="show_level_in_icon_on">Показывать уровень на иконке уведомления о низком заряде батареи</string>
 <string name="show_level_in_icon_off">Не показывать уровень на иконке уведомления о низком заряде батареи</string>

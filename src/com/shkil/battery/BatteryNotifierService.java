@@ -91,6 +91,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 				Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
 				if (status == BatteryManager.BATTERY_STATUS_FULL) {
 					batteryLevel = 100;
+					if (showLevelInIcon) {
+						notification.number = 100;
+					}
 					boolean isPlugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0; //TODO is it necessary?
 					setBatteryState(isPlugged ? STATE_FULL : STATE_OKAY, false);
 				}
@@ -199,6 +202,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					startInsist();
 				}
 			}
+		}
+		else if (Settings.NOTIFY_FULL_BATTERY.equals(key)) {
+			setBatteryState(batteryState, true);
 		}
 		else {
 			Resources resources = getResources();
@@ -378,7 +384,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 						notification.tickerText = getString(R.string.low_battery_level_ticker);
 						updateNotification();
 						SharedPreferences settings = this.settings;
-						alarm(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE);
+						alarm(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, Settings.LOW_CHARGE_RINGTONE);
 						if (!Settings.isAlarmDisabled(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, settings)) {
 							startInsist();
 						}
@@ -416,8 +422,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 							notification.flags |= Notification.FLAG_AUTO_CANCEL;
 						}
 						updateNotification();
-						if (notifyFullBattery) {
-							alarm(Settings.FULL_CHARGE_SOUND_MODE, Settings.FULL_CHARGE_VIBRO_MODE);
+						if (notifyFullBattery && stateChanged) {
+							alarm(Settings.FULL_CHARGE_SOUND_MODE, Settings.FULL_CHARGE_VIBRO_MODE, Settings.FULL_CHARGE_RINGTONE);
 						}
 					}
 					else {
@@ -474,11 +480,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		showNotification(notification);
 	}
 
-	public void alarm(String soundKey, String vibroKey) {
-		alarm(soundKey, vibroKey, settings, this);
+	public void alarm(String soundModeKey, String vibroModeKey, String ringtoneKey) {
+		alarm(soundModeKey, vibroModeKey, ringtoneKey, settings, this);
 	}
 
-	public static void alarm(String soundModeKey, String vibroModeKey, SharedPreferences settings, Context context) {
+	public static void alarm(String soundModeKey, String vibroModeKey, String ringtoneKey, SharedPreferences settings, Context context) {
 		AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		if (Settings.shouldVibrate(vibroModeKey, settings, audioManager)) {
 			Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -489,7 +495,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			if (player == null) {
 				player = new AsyncPlayer(TAG);
 			}
-			Uri ringtone = Settings.getAlertRingtone(settings);
+			Uri ringtone = Settings.getRingtone(ringtoneKey, settings);
 			int stream = shouldSound == Settings.SHOULD_SOUND_TRUE ? AudioManager.STREAM_ALARM : AudioManager.STREAM_NOTIFICATION;
 			player.play(context, ringtone, false, stream);
 		}

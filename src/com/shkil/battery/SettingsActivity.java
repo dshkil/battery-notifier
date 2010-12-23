@@ -92,6 +92,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		else if (Settings.LOW_CHARGE_VIBRO_MODE.equals(key) || Settings.LOW_CHARGE_SOUND_MODE.equals(key)) {
 			updateSummary();
 		}
+		else if (Settings.FULL_CHARGE_VIBRO_MODE.equals(key) || Settings.FULL_CHARGE_SOUND_MODE.equals(key)) {
+			updateSummary();
+		}
 	}
 
 	protected void updateSummary() {
@@ -113,8 +116,25 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		String intervalSummary = getString(R.string.alert_interval_summary, intervalPreference.getEntry());
 		intervalPreference.setSummary(intervalSummary);
 
-		ListPreference vibroModePreference = (ListPreference) preferenceScreen.findPreference(Settings.LOW_CHARGE_VIBRO_MODE);
-		String vibroModeValue = vibroModePreference.getValue();
+		ListPreference lowVibroModePreference = (ListPreference) preferenceScreen.findPreference(Settings.LOW_CHARGE_VIBRO_MODE);
+		updateModeSummary(lowVibroModePreference);
+
+		ListPreference lowSoundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.LOW_CHARGE_SOUND_MODE);
+		updateModeSummary(lowSoundModePreference);
+		boolean lowSoundEnabled = !String.valueOf(Settings.MODE_NEVER).equals(lowSoundModePreference.getValue());
+		findPreference(Settings.LOW_CHARGE_RINGTONE).setEnabled(lowSoundEnabled);
+
+		ListPreference fullVibroModePreference = (ListPreference) preferenceScreen.findPreference(Settings.FULL_CHARGE_VIBRO_MODE);
+		updateModeSummary(fullVibroModePreference);
+
+		ListPreference fullSoundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.FULL_CHARGE_SOUND_MODE);
+		updateModeSummary(fullSoundModePreference);
+		boolean fullSoundEnabled = !String.valueOf(Settings.MODE_NEVER).equals(fullSoundModePreference.getValue());
+		findPreference(Settings.FULL_CHARGE_RINGTONE).setEnabled(fullSoundEnabled);
+	}
+
+	private void updateModeSummary(ListPreference preference) {
+		String vibroModeValue = preference.getValue();
 		String vibroModeSummary;
 		if (String.valueOf(Settings.MODE_ALWAYS).equals(vibroModeValue)) {
 			vibroModeSummary = getString(R.string.mode_always_summary);
@@ -123,39 +143,31 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			vibroModeSummary = getString(R.string.mode_never_summary);
 		}
 		else {
-			vibroModeSummary = getString(R.string.vibro_mode_summary, vibroModePreference.getEntry());
+			vibroModeSummary = getString(R.string.mode_summary, preference.getEntry());
 		}
-		vibroModePreference.setSummary(vibroModeSummary);
-
-		ListPreference soundModePreference = (ListPreference) preferenceScreen.findPreference(Settings.LOW_CHARGE_SOUND_MODE);
-		String sounfModeValue = soundModePreference.getValue();
-		String soundModeSummary;
-		boolean soundEnabled = true;
-		if (String.valueOf(Settings.MODE_ALWAYS).equals(sounfModeValue)) {
-			soundModeSummary = getString(R.string.mode_always_summary);
-		}
-		else if (String.valueOf(Settings.MODE_NEVER).equals(sounfModeValue)) {
-			soundModeSummary = getString(R.string.mode_never_summary);
-			soundEnabled = false;
-		}
-		else {
-			soundModeSummary = getString(R.string.vibro_mode_summary, soundModePreference.getEntry());
-		}
-		soundModePreference.setSummary(soundModeSummary);
-
-		findPreference(Settings.ALERT_RINGTONE).setEnabled(soundEnabled);
+		preference.setSummary(vibroModeSummary);
 	}
 
 	protected void updateRingtoneSummary() {
 		PreferenceScreen preferenceScreen = getPreferenceScreen();
 		SharedPreferences settings = preferenceScreen.getSharedPreferences();
-		Preference ringtonePreference = preferenceScreen.findPreference(Settings.ALERT_RINGTONE);
-		String ringtone = settings.getString(Settings.ALERT_RINGTONE, null);
-		if (ringtone == null || System.DEFAULT_NOTIFICATION_URI.toString().equals(ringtone)) {
-			ringtonePreference.setSummary(R.string.alert_ringtone_is_default);
+		//low battery ringtone
+		Preference lowRingtonePreference = preferenceScreen.findPreference(Settings.LOW_CHARGE_RINGTONE);
+		String lowRingtone = settings.getString(Settings.LOW_CHARGE_RINGTONE, null);
+		if (lowRingtone == null || System.DEFAULT_NOTIFICATION_URI.toString().equals(lowRingtone)) {
+			lowRingtonePreference.setSummary(R.string.alert_ringtone_is_default);
 		}
 		else {
-			ringtonePreference.setSummary(R.string.alert_ringtone_is_custom);
+			lowRingtonePreference.setSummary(R.string.alert_ringtone_is_custom);
+		}
+		//full battery ringtone
+		Preference fullRingtonePreference = preferenceScreen.findPreference(Settings.FULL_CHARGE_RINGTONE);
+		String fullRingtone = settings.getString(Settings.FULL_CHARGE_RINGTONE, null);
+		if (fullRingtone == null || System.DEFAULT_NOTIFICATION_URI.toString().equals(fullRingtone)) {
+			fullRingtonePreference.setSummary(R.string.alert_ringtone_is_default);
+		}
+		else {
+			fullRingtonePreference.setSummary(R.string.alert_ringtone_is_custom);
 		}
 	}
 

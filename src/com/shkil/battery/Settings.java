@@ -13,13 +13,14 @@ public class Settings {
 	public static final String LOW_BATTERY_LEVEL = "low_battery_level";
 	public static final String NOTIFY_FULL_BATTERY = "notify_full_battery";
 	public static final String ALERT_INTERVAL = "alert_interval";
-	public static final String ALERT_RINGTONE = "alert_ringtone";
 	public static final String SHOW_LEVEL_IN_ICON = "show_level_in_icon";
 
 	public static final String LOW_CHARGE_SOUND_MODE = "sound_mode";
 	public static final String LOW_CHARGE_VIBRO_MODE = "vibro_mode";
+	public static final String LOW_CHARGE_RINGTONE = "alert_ringtone";
 	public static final String FULL_CHARGE_SOUND_MODE = "full_charge_sound_mode";
 	public static final String FULL_CHARGE_VIBRO_MODE = "full_charge_vibro_mode";
+	public static final String FULL_CHARGE_RINGTONE = "full_charge_ringtone";
 
 	public static final int MODE_SYSTEM = 0;
 	public static final int MODE_ALWAYS = 1;
@@ -33,8 +34,8 @@ public class Settings {
 
 	private static final String MODE_NEVER_STR = String.valueOf(MODE_NEVER);
 
-	public static Uri getAlertRingtone(SharedPreferences settings) {
-		String ringtone = settings.getString(Settings.ALERT_RINGTONE, null);
+	public static Uri getRingtone(String ringtoneKey, SharedPreferences settings) {
+		String ringtone = settings.getString(ringtoneKey, null);
 		if (ringtone != null) {
 			return Uri.parse(ringtone);
 		}
