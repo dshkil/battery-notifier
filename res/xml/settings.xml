@@ -104,11 +104,11 @@
 
 <PreferenceCategory android:title="@string/miscellaneous">
 	<CheckBoxPreference
-		android:key="always_show_icon"
-		android:title="@string/always_show_icon"
-		android:defaultValue="@bool/default_always_show_icon"
-		android:summaryOn="@string/always_show_icon_on"
-		android:summaryOff="@string/always_show_icon_off"
+		android:key="always_show_notification"
+		android:title="@string/always_show_notification"
+		android:defaultValue="@bool/default_always_show_notification"
+		android:summaryOn="@string/always_show_notification_on"
+		android:summaryOff="@string/always_show_notification_off"
 	/>
 	<CheckBoxPreference
 		android:key="show_level_in_icon"

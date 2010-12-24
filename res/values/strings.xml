@@ -20,10 +20,15 @@
 <string name="service_stopped">Service stopped</string>
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped. Notifications will NOT be shown</string>
-<string name="battery_level_is_low">Low battery charge</string>
+<string name="battery_level_is_low">Low on battery charge</string>
+<string name="battery_level_is_okay">Battery charge is okay</string>
 <string name="battery_level_is_full">Battery is fully charged</string>
-<string name="battery_level_notification_info">Remaining charge: %1$d%%</string>
+<string name="battery_level_notification_info">Remaining charge level is %1$d%%</string>
 <string name="battery_level_notification_info_ex">Charge: %1$d%% / Unplugged: %2$s</string>
+<string name="battery_is_charging">Battery is being charged</string>
+<string name="battery_is_charging_notification_info">Current charge level is %1$d%%</string>
+<string name="battery_level_is_okay_notification_info">Charge: %1$d%% / Unplugged: %2$s</string>
+<string name="battery_level_is_full_notification_info"></string>
 <string name="sound_mode">Sound</string>
 <string name="vibro_mode">Vibration</string>
 <string name="mode_summary">%1$s</string>
@@ -46,7 +51,7 @@
 <string name="show_level_in_icon">Show level in the icon</string>
 <string name="show_level_in_icon_on">Remaining charge level will be shown in the status bar icon</string>
 <string name="show_level_in_icon_off">Remaining charge level will NOT be shown in the status bar icon</string>
-<string name="always_show_icon">Always show notification</string>
-<string name="always_show_icon_on"></string>
-<string name="always_show_icon_off"></string>
+<string name="always_show_notification">Always show notification</string>
+<string name="always_show_notification_on">Always show notification when running</string>
+<string name="always_show_notification_off">Show notification only in specified cases</string>
 </resources>

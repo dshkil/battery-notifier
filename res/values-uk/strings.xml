@@ -19,9 +19,14 @@
 <string name="service_is_running">Служба зараз працює</string>
 <string name="service_is_stopped">Служба зупинена. Сповіщення показуватися НЕ будуть</string>
 <string name="battery_level_is_low">Заряд батареї є низьким</string>
+<string name="battery_level_is_okay">Заряд батареї є достатнім</string>
 <string name="battery_level_is_full">Батарея повністю заряджена</string>
 <string name="battery_level_notification_info">Залишок заряду: %1$d%%</string>
 <string name="battery_level_notification_info_ex">Заряд: %1$d%% / Від\'єднано: %2$s</string>
+<string name="battery_is_charging">Батарея наразі заряджається</string>
+<string name="battery_is_charging_notification_info">Теперішній рівень заряду: %1$d%%</string>
+<string name="battery_level_is_okay_notification_info">Заряд: %1$d%% / Від\'єднано: %2$s</string>
+<string name="battery_level_is_full_notification_info"></string>
 <string name="sound_mode">Звук</string>
 <string name="vibro_mode">Вібрація</string>
 <string name="mode_always_summary">Завжди дозволено</string>
@@ -38,9 +43,12 @@
 <string name="about_summary">Battery Notifier %1$s</string>
 <string name="about_message">Battery Notifier призначений для сповіщення про рівень заряду батареї телефону\r\n\r\n\u00A9 2010 Дмитро Шкіль</string>
 <string name="general_options">Загальні налаштування</string>
-<string name="low_battery_options">Налаштування сповіщень про низький заряд</string>
-<string name="full_battery_options">Full charge level options</string>
+<string name="low_battery_options">Cповіщення про низький заряд</string>
+<string name="full_battery_options">Сповіщення про повний заряд</string>
 <string name="show_level_in_icon">Іконка з рівнем заряду</string>
 <string name="show_level_in_icon_on">Показувати рівень на іконці сповіщення про низький заряд батареї</string>
 <string name="show_level_in_icon_off">Не показувати рівень на іконці сповіщення про низький заряд батареї</string>
+<string name="always_show_notification">Завжди показувати сповіщення</string>
+<string name="always_show_notification_on">Завжди показувати сповіщення коли службу запущено</string>
+<string name="always_show_notification_off">Показувати сповіщення лише в зазначених випадках</string>
 </resources>
