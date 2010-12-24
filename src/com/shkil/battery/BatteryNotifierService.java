@@ -228,7 +228,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 						hideNotification();
 						notification.number = 0;
 					}
+					notification.tickerText = null;
 					showNotification(notification);
+				}
+				else {
+					notification.number = showLevelInIcon ? batteryLevel : 0;
 				}
 			}
 			if (key == null || Settings.LOW_BATTERY_LEVEL.equals(key)) {
@@ -351,7 +355,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	public static int getBatteryIcon(int level) {
-		return level > 20 ? R.drawable.battery_almost_low : R.drawable.battery_low;
+		if (level >= 90) {
+			return R.drawable.battery_good;
+		}
+		if (level >= 50) {
+			return R.drawable.battery_above_half;
+		}
+		return level > 25 ? R.drawable.battery_below_half : R.drawable.battery_low;
 	}
 
 	private void showNotification(Notification notification) {
@@ -471,7 +481,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 				break;
 			}
 			case STATE_FULL: {
-				notification.icon = R.drawable.battery_full;
+				notification.icon = R.drawable.battery_charge;
 				String contentText = getString(R.string.battery_level_is_full_notification_info);
 				notification.setLatestEventInfo(this, getString(R.string.battery_level_is_full), contentText, notification.contentIntent);
 				break;

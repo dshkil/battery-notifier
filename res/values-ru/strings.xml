@@ -26,7 +26,7 @@
 <string name="battery_is_charging">Батарея сейчас заряжается</string>
 <string name="battery_is_charging_notification_info">Текущий уровень заряда: %1$d%%</string>
 <string name="battery_level_is_okay_notification_info">Заряд: %1$d%% / Отключено: %2$s</string>
-<string name="battery_level_is_full_notification_info"></string>
+<string name="battery_level_is_full_notification_info">Батарея телефона полностью заряжена</string>
 <string name="sound_mode">Звук</string>
 <string name="vibro_mode">Вибрация</string>
 <string name="mode_always_summary">Всегда разрешено</string>
@@ -34,14 +34,14 @@
 <string name="alert_interval">Интервал напоминаний</string>
 <string name="alert_interval_summary">Напоминать о низком заряде батареи каждые %1$s</string>
 <string name="low_battery_level_ticker">Низкий заряд батареи...</string>
-<string name="full_battery_level_ticker">Батарея полностью зарядилась...</string>
+<string name="full_battery_level_ticker">Батарея полностью заряжена...</string>
 <string name="alert_ringtone">Мелодия</string>
 <string name="alert_ringtone_is_default">Используется стандартный звук уведомлений</string>
 <string name="alert_ringtone_is_custom">Используется звук выбраный пользователем</string>
 <string name="miscellaneous">Разное</string>
 <string name="about">О программе</string>
 <string name="about_summary">Battery Notifier %1$s</string>
-<string name="about_message">Battery Notifier предназначен для оповещения о уровне заряда батареи телефона\r\n\r\n\u00A9 2010 Дмитрий Шкиль</string>
+<string name="about_message">Battery Notifier предназначен для отображения состояния батареи телефона, а так же оповещения об уровне заряда\r\n\r\n\u00A9 2010 Дмитрий Шкиль</string>
 <string name="general_options">Общие настройки</string>
 <string name="low_battery_options">Настройки оповещений о низком заряде</string>
 <string name="full_battery_options">Настройки оповещений о полном заряде</string>
