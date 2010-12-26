@@ -378,15 +378,15 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	void setBatteryState(int state, boolean settingsChanged) {
 		boolean stateChanged = this.batteryState != state;  
 		if (stateChanged || settingsChanged) {
+			Notification notification = this.notification;
 			if (stateChanged) {
 				this.batteryState = state;
 				Log.d(TAG, "Battery state became " + state);
+				notification.when = System.currentTimeMillis();
 				if (insistTimerActive) {
 					stopInsist();
 				}
 			}
-			Notification notification = this.notification;
-			notification.when = System.currentTimeMillis();
 			notification.flags = DEFAULT_NOTIFICATION_FLAGS;
 			switch (state) {
 				case STATE_LOW: {
