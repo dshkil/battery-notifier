@@ -2,11 +2,11 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.shkil.battery"
-	android:versionCode="6" android:versionName="1.2.2">
+	android:versionCode="9" android:versionName="1.2.4">
 
 	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="9"/>
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false">
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity
 			android:name=".SettingsActivity"
 			android:label="@string/launcher_name"
@@ -24,8 +24,7 @@
 		<receiver
 			android:name=".BootCompletedReceiver"
 			android:enabled="true"
-			android:exported="false"
-			android:label="Boot Completed Receiver">
+			android:exported="false">
 			<intent-filter>
 	        	<action android:name="android.intent.action.BOOT_COMPLETED" />
 			</intent-filter>

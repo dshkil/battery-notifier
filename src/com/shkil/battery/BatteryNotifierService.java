@@ -36,7 +36,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	static final long[] VIBRATE_PATTERN = new long[] {0,50,200,100};
 
 	static final int NOTIFICATION_ID = 1;
-	static final int DEFAULT_NOTIFICATION_FLAGS = Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_NO_CLEAR;
+	static final int DEFAULT_NOTIFICATION_FLAGS = Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
 	static final int STATE_OKAY = 1;
 	static final int STATE_LOW = 2;
@@ -94,8 +94,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					if (showLevelInIcon) {
 						notification.number = 100;
 					}
-					boolean isPlugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0; //TODO is it necessary?
-					setBatteryState(isPlugged ? STATE_FULL : STATE_OKAY, false);
+					setBatteryState(STATE_FULL, false);
 				}
 				else {
 					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {

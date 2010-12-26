@@ -14,6 +14,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.provider.Settings.System;
+import android.util.Log;
 import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -46,11 +47,15 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				return true;
 			}
 		});
+		if (!preferenceScreen.getSharedPreferences().getBoolean(Settings.START_AT_BOOT, true)) {
+			BootCompletedReceiver.setReceiverEnabled(false, this); //TODO obsolete in next versions
+		}
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
 			aboutPreference.setSummary(getString(R.string.about_summary, info.versionName));
 		}
-		catch (NameNotFoundException e) {
+		catch (NameNotFoundException ex) {
+			Log.e(SettingsActivity.class.getSimpleName(), "", ex);
 		}
 	}
 
@@ -94,6 +99,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 		else if (Settings.FULL_CHARGE_VIBRO_MODE.equals(key) || Settings.FULL_CHARGE_SOUND_MODE.equals(key)) {
 			updateSummary();
+		}
+		else if (Settings.START_AT_BOOT.equals(key)) {
+			boolean startAtBoot = settings.getBoolean(Settings.START_AT_BOOT, true);
+			BootCompletedReceiver.setReceiverEnabled(startAtBoot, this);
 		}
 	}
 
