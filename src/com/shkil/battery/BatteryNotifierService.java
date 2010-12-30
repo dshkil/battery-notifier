@@ -89,26 +89,24 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 				lastStatus = status;
 				lastRawLevel = level;
 				Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
-				if (status == BatteryManager.BATTERY_STATUS_FULL) {
-					batteryLevel = 100;
+				if (levelChanged) {
+					batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 					if (showLevelInIcon) {
-						notification.number = 100;
+						notification.number = batteryLevel;
 					}
-					setBatteryState(STATE_FULL, false);
+				}
+				if (status == BatteryManager.BATTERY_STATUS_FULL) {
+					if (statusChanged) {
+						setBatteryState(STATE_FULL, false);
+					}
 				}
 				else {
 					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-						if (levelChanged) {
-							batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
-							if (showLevelInIcon) {
-								notification.number = batteryLevel;
-							}
-						}
 						if (statusChanged) {
 							unpluggedSince = 0;
 							setBatteryState(STATE_CHARGING, false);
 						}
-						else if (levelChanged) {
+						else /*if (levelChanged)*/ {
 							updateNotification();
 						}
 					}
@@ -121,8 +119,6 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 							}
 						}
 						if (levelChanged) {
-							batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
-							notification.number = showLevelInIcon ? batteryLevel : 0;
 							int oldBatteryState = batteryState;
 							checkBatteryLevel();
 							if (notificationVisible && oldBatteryState == batteryState) {
@@ -284,6 +280,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		insistTimerActive = false;
 		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		alarmManager.cancel(insistTimerPendingIntent);
+		if (player != null) {
+			player.stop();
+		}
 	}
 
 	public static boolean isRunning(Context context) {
@@ -366,7 +365,6 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	private void showNotification(Notification notification) {
 		startForegroundCompat(NOTIFICATION_ID, notification);
 		notificationVisible = true;
-		System.out.println("BatteryNotifierService.showNotification()");
 	}
 
 	private void hideNotification() {
