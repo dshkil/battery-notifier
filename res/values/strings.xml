@@ -28,7 +28,7 @@
 <string name="battery_is_charging">Battery is being charged</string>
 <string name="battery_is_charging_notification_info">Current charge level is %1$d%%</string>
 <string name="battery_level_is_okay_notification_info">Charge: %1$d%% / Unplugged: %2$s</string>
-<string name="battery_level_is_full_notification_info">The phone battery is fully charged</string>
+<string name="battery_level_is_full_notification_info">Current charge level is %1$d%%</string>
 <string name="sound_mode">Sound</string>
 <string name="vibro_mode">Vibration</string>
 <string name="mode_summary">%1$s</string>

@@ -26,7 +26,7 @@
 <string name="battery_is_charging">Батарея сейчас заряжается</string>
 <string name="battery_is_charging_notification_info">Текущий уровень заряда: %1$d%%</string>
 <string name="battery_level_is_okay_notification_info">Заряд: %1$d%% / Отключено: %2$s</string>
-<string name="battery_level_is_full_notification_info">Батарея телефона полностью заряжена</string>
+<string name="battery_level_is_full_notification_info">Текущий уровень заряда: %1$d%%</string>
 <string name="sound_mode">Звук</string>
 <string name="vibro_mode">Вибрация</string>
 <string name="mode_always_summary">Всегда разрешено</string>

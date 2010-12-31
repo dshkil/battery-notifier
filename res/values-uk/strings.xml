@@ -26,7 +26,7 @@
 <string name="battery_is_charging">Батарея наразі заряджається</string>
 <string name="battery_is_charging_notification_info">Теперішній рівень заряду: %1$d%%</string>
 <string name="battery_level_is_okay_notification_info">Заряд: %1$d%% / Від\'єднано: %2$s</string>
-<string name="battery_level_is_full_notification_info">Батарея телефону повністю заряджена</string>
+<string name="battery_level_is_full_notification_info">Теперішній рівень заряду: %1$d%%</string>
 <string name="sound_mode">Звук</string>
 <string name="vibro_mode">Вібрація</string>
 <string name="mode_always_summary">Завжди дозволено</string>

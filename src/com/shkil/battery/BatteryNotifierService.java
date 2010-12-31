@@ -99,6 +99,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					if (statusChanged) {
 						setBatteryState(STATE_FULL, false);
 					}
+					else if (notificationVisible) {
+						updateNotification();
+					}
 				}
 				else {
 					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
@@ -106,7 +109,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 							unpluggedSince = 0;
 							setBatteryState(STATE_CHARGING, false);
 						}
-						else /*if (levelChanged)*/ {
+						else {
 							updateNotification();
 						}
 					}
@@ -479,7 +482,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			}
 			case STATE_FULL: {
 				notification.icon = R.drawable.battery_charge;
-				String contentText = getString(R.string.battery_level_is_full_notification_info);
+				String contentText = getString(R.string.battery_level_is_full_notification_info, batteryLevel);
 				notification.setLatestEventInfo(this, getString(R.string.battery_level_is_full), contentText, notification.contentIntent);
 				break;
 			}
