@@ -153,7 +153,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (startForegroundMethod == null) {
 			setForeground(true);
 		}
-		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, AlarmReciever.class), 0);
+		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, AlarmReceiver.class), 0);
 		notificationService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notification = new Notification();
 		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
