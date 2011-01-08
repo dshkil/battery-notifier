@@ -1,0 +1,8 @@
+This is a simple and lightweight application intended to show battery status in the status bar and repeatedly alert when your battery charge level is getting low. Сan notify when battery is fully charged as well. Customizable settings allow you to specify low battery level, sound & vibration mode, alert ringtone, low battery alert repeat interval and so on.
+
+Doesn’t dry your battery at all and has a small size.
+
+Battery Notifier is available on the Android Market for free.
+
+Please suggest new features and report bugs via:
+http://code.google.com/p/battery-notifier/issues/list
