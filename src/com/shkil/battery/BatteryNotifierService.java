@@ -1,6 +1,5 @@
 package com.shkil.battery;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -66,6 +65,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	static Method startForegroundMethod;
 	static Method stopForegroundMethod;
+	static final Object[] startForegroundArgs = new Object[2];
+	static final Object[] stopForegroundArgs = new Object[] {Boolean.TRUE};
 	static {
 		try {
 			startForegroundMethod = Service.class.getMethod("startForeground", new Class[] {int.class, Notification.class});
@@ -88,7 +89,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			if (levelChanged || statusChanged) {
 				lastStatus = status;
 				lastRawLevel = level;
-				Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
+//				Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
 				if (levelChanged) {
 					batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 					if (showLevelInIcon) {
@@ -138,7 +139,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	};	
 
 	void checkBatteryLevel() {
-		Log.d(TAG, "checkBatteryLevel(): batteryState=" + batteryState);
+//		Log.d(TAG, "checkBatteryLevel(): batteryState=" + batteryState);
 		if (batteryLevel > lowBatteryLevel || lowBatteryLevel == 0) {
 			setBatteryState(STATE_OKAY, false);
 		}
@@ -319,13 +320,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		// If we have the new startForeground API, then use it
 		if (startForegroundMethod != null) {
 			try {
-				startForegroundMethod.invoke(this, new Object[] {Integer.valueOf(id), notification});
+				Object[] startForegroundArgs = BatteryNotifierService.startForegroundArgs;
+				startForegroundArgs[0] = Integer.valueOf(id);
+				startForegroundArgs[1] = notification;
+				startForegroundMethod.invoke(this, startForegroundArgs);
 			}
-			catch (InvocationTargetException e) {
-				Log.w(TAG, "Unable to invoke startForeground", e);
-			}
-			catch (IllegalAccessException e) {
-				Log.w(TAG, "Unable to invoke startForeground", e);
+			catch (Exception e) {
+				Log.e(TAG, "Unable to invoke startForeground", e);
 			}
 		}
 		else { // Fall back on the old API
@@ -340,13 +341,10 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		// If we have the new stopForeground API, then use it.
 		if (stopForegroundMethod != null) {
 			try {
-				stopForegroundMethod.invoke(this, new Object[] {Boolean.TRUE});
+				stopForegroundMethod.invoke(this, stopForegroundArgs);
 			}
-			catch (InvocationTargetException e) {
-				Log.w(TAG, "Unable to invoke stopForeground", e);
-			}
-			catch (IllegalAccessException e) {
-				Log.w(TAG, "Unable to invoke stopForeground", e);
+			catch (Exception e) {
+				Log.e(TAG, "Unable to invoke stopForeground", e);
 			}
 		}
 		else {
@@ -381,7 +379,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			Notification notification = this.notification;
 			if (stateChanged) {
 				this.batteryState = state;
-				Log.d(TAG, "Battery state became " + state);
+//				Log.d(TAG, "Battery state became " + state);
 				notification.when = System.currentTimeMillis();
 				if (insistTimerActive) {
 					stopInsist();

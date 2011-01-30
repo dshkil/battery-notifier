@@ -47,9 +47,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				return true;
 			}
 		});
-		if (!preferenceScreen.getSharedPreferences().getBoolean(Settings.START_AT_BOOT, true)) {
-			BootCompletedReceiver.setReceiverEnabled(false, this); //TODO obsolete in next versions
-		}
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
 			aboutPreference.setSummary(getString(R.string.about_summary, info.versionName));
