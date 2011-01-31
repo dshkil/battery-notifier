@@ -157,7 +157,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, AlarmReceiver.class), 0);
 		notificationService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notification = new Notification();
-		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, SettingsActivity.class), 0);
+		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, DashboardActivity.class), 0);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		updateValuesFromSettings(settings, null);
 		registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));

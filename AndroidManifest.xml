@@ -10,12 +10,22 @@
         <activity
 			android:name=".SettingsActivity"
 			android:label="@string/launcher_name"
+			android:excludeFromRecents="true"
 			android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+		<activity
+			android:name=".DashboardActivity"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar"
+			android:launchMode="singleInstance">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
 
 		<service android:name=".BatteryNotifierService" android:label="BatteryNotifierService" />
 
@@ -29,15 +39,6 @@
 	        	<action android:name="android.intent.action.BOOT_COMPLETED" />
 			</intent-filter>
 		</receiver>
-		<activity
-			android:name=".DashboardActivity"
-			android:theme="@android:style/Theme.Translucent.NoTitleBar"
-			android:launchMode="singleTask"
-			android:noHistory="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-			</intent-filter>
-		</activity>
 	</application>
 
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

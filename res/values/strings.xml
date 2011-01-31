@@ -44,7 +44,7 @@
 <string name="miscellaneous">Miscellaneous</string>
 <string name="about">About</string>
 <string name="about_summary">Battery Notifier %1$s</string>
-<string name="about_message">Battery Notifier is intended to indicate battery status and notify about full or low battery charge levels\r\n\r\n\u00A9 2010 Dmytro Shkil</string>
+<string name="about_message">Battery Notifier is intended to indicate battery status and notify about full or low battery charge levels\r\n\r\n\u00A9 2011 Dmytro Shkil</string>
 <string name="general_options">General options</string>
 <string name="low_battery_options">Low battery charge options</string>
 <string name="full_battery_options">Full battery charge options</string>
