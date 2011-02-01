@@ -9,9 +9,6 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class DashboardActivity extends Activity implements OnClickListener {
 
@@ -30,7 +27,12 @@ public class DashboardActivity extends Activity implements OnClickListener {
 		dialog = new Dialog(this) {
 			@Override
 			public boolean onCreateOptionsMenu(Menu menu) {
-				menu.add(R.string.settings_title).setIntent(new Intent(getBaseContext(), SettingsActivity.class));
+				menu.add("Battery use").setIntent(
+					new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary")
+				);
+				menu.add("Battery info").setIntent(
+					new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
+				);
 				return true;
 			}
 			@Override
@@ -45,24 +47,26 @@ public class DashboardActivity extends Activity implements OnClickListener {
 		snoozeAlertsButton.setOnClickListener(this);
 		View unsnoozeAlertsButton = dialog.findViewById(R.id.unsnoozeAlertsButton);
 		unsnoozeAlertsButton.setOnClickListener(this);
-		//View batteryUseButton = dialog.findViewById(R.id.batteryUseButton);
-		//batteryUseButton.setOnClickListener(this);
-		//View batteryInfoButton = dialog.findViewById(R.id.batteryInfoButton);
-		//batteryInfoButton.setOnClickListener(this);
+		View settingsButton = dialog.findViewById(R.id.settingsButton);
+		settingsButton.setOnClickListener(this);
+//		View batteryUseButton = dialog.findViewById(R.id.batteryUseButton);
+//		batteryUseButton.setOnClickListener(this);
+//		View batteryInfoButton = dialog.findViewById(R.id.batteryInfoButton);
+//		batteryInfoButton.setOnClickListener(this);
 		return dialog;
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.batteryUseButton:
-				startActivity(new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary"));
-				//finish();
-				break;
-			case R.id.batteryInfoButton:
-				startActivity(new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo"));
-				//finish();
-				break;
+//			case R.id.batteryUseButton:
+//				startActivity(new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary"));
+//				//finish();
+//				break;
+//			case R.id.batteryInfoButton:
+//				startActivity(new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo"));
+//				//finish();
+//				break;
 			case R.id.snoozeAlertsButton: {
 				View snoozeAlertsButton = dialog.findViewById(R.id.snoozeAlertsButton);
 				View snoozedText = dialog.findViewById(R.id.snoozedText);
@@ -83,6 +87,9 @@ public class DashboardActivity extends Activity implements OnClickListener {
 				snoozeAlertsButton.startAnimation(hyperspaceJump);
 				break;
 			}
+			case R.id.settingsButton:
+				startActivity(new Intent(this, SettingsActivity.class));
+				break;
 		}
 	}
 
