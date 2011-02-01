@@ -6,33 +6,48 @@
 	android:layout_width="270.0dip"
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
-	<TextView
-		android:id="@+id/snoozeButton"
-		android:text="Snooze alerts..."
-		android:textColor="#FFFFFF"
-		android:textStyle="bold"
-		android:layout_width="fill_parent"
-		android:layout_height="48.0dip"
-		android:singleLine="true"
-		android:focusable="true"
-		android:clickable="true"
-		android:longClickable="true"
-		android:drawableLeft="@drawable/snooze_off"
-		android:gravity="center_vertical"
-		android:paddingLeft="13.0dip"
-		android:ellipsize="marquee"
-		android:drawablePadding="5.0dip"
+	<FrameLayout
 		android:layout_marginBottom="10.0dip"
-		android:background="@drawable/btn_background" />
-	<ImageButton
-		android:id="@+id/snoozeButton"
-		android:layout_width="48.0dip"
-		android:layout_height="48.0dip"
-		android:src="@drawable/snooze_off"
-		android:gravity="center"
-		android:layout_marginBottom="10.0dip"
-		android:layout_gravity="right"
-		android:background="@drawable/btn_background" />
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent">
+		<TextView
+			android:id="@+id/snoozedText"
+			android:text="Snoozeed due 22:22"
+			android:textColor="#FFFFFF"
+			android:textStyle="bold"
+			android:layout_width="fill_parent"
+			android:layout_height="48.0dip"
+			android:singleLine="true"
+			android:gravity="center_vertical|right"
+			android:paddingRight="60.0dip"
+			android:ellipsize="marquee" />
+		<TextView
+			android:id="@+id/snoozeAlertsButton"
+			android:text="Snooze alerts..."
+			android:textColor="#FFFFFF"
+			android:textStyle="bold"
+			android:layout_width="fill_parent"
+			android:layout_height="48.0dip"
+			android:singleLine="true"
+			android:focusable="true"
+			android:clickable="true"
+			android:longClickable="true"
+			android:drawableLeft="@drawable/snooze_off"
+			android:gravity="center_vertical"
+			android:paddingLeft="13.0dip"
+			android:ellipsize="marquee"
+			android:drawablePadding="5.0dip"
+			android:visibility="invisible"
+			android:background="@drawable/btn_background" />
+		<ImageButton
+			android:id="@+id/unsnoozeAlertsButton"
+			android:layout_width="48.0dip"
+			android:layout_height="48.0dip"
+			android:src="@drawable/snooze_off"
+			android:gravity="center"
+			android:layout_gravity="right"
+			android:background="@drawable/btn_background" />
+	</FrameLayout>
 	<Button
 		android:text="Battery use" android:id="@+id/batteryUseButton"
 		android:textColor="#FFFFFF"
