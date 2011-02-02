@@ -8,62 +8,60 @@
 	android:orientation="vertical">
 
 	<TextView
-		android:id="@+id/batteryStatusLabel"
-		android:text="Battery status:"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textSize="18.0dip" />
-
-	<TextView
-		android:id="@+id/batteryStatusValue"
-		android:text="Low"
-		android:layout_toRightOf="@id/batteryStatusLabel"
-		android:layout_alignBaseline="@id/batteryStatusLabel"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginLeft="10.0dip"
-		android:textSize="18.0dip"
-		android:textStyle="bold"
-		android:textColor="#FFFFFF" />
-
-	<TextView
 		android:id="@+id/batteryLevelLabel"
-		android:text="Battery level:"
-		android:layout_below="@id/batteryStatusValue"
+		android:text="Charge level:"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="10.0dip"
-		android:textSize="18.0dip" />
+		android:textSize="17.0dip" />
 	<TextView
 		android:id="@+id/batteryLevelValue"
-		android:text="100%"
-		android:layout_toRightOf="@id/batteryLevelLabel"
+		android:text=""
+		android:layout_alignParentRight="true"
 		android:layout_alignBaseline="@id/batteryLevelLabel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="10.0dip"
-		android:textSize="18.0dip"
-		android:textStyle="bold"
+		android:textSize="17.0dip"
+		android:background="@drawable/low_level_bg"
+		android:paddingLeft="5.0dip"
+		android:paddingRight="5.0dip"
+		android:textColor="#FFFFFF" />
+
+	<TextView
+		android:id="@+id/batteryStatusLabel"
+		android:text="Battery status:"
+		android:layout_below="@id/batteryLevelValue"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="8.0dip"
+		android:textScaleX="0.95"
+		android:textSize="17.0dip" />
+	<TextView
+		android:id="@+id/batteryStatusValue"
+		android:text="@string/statusUnknown"
+		android:layout_alignParentRight="true"
+		android:layout_alignBaseline="@id/batteryStatusLabel"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="17.0dip"
+		android:textScaleX="0.875"
 		android:textColor="#FFFFFF" />
 
 	<TextView
 		android:id="@+id/unpluggedSinceLabel"
-		android:text="Unplugged:"
-		android:layout_below="@id/batteryLevelLabel"
+		android:text="Unplugged since:"
+		android:layout_below="@id/batteryStatusLabel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="10.0dip"
-		android:textSize="18.0dip" />
+		android:layout_marginTop="8.0dip"
+		android:textSize="17.0dip" />
 	<TextView
 		android:id="@+id/unpluggedSinceValue"
-		android:text="22:22, Wed"
-		android:layout_toRightOf="@id/unpluggedSinceLabel"
+		android:text="Feb 1, 22:22"
+		android:layout_alignParentRight="true"
 		android:layout_alignBaseline="@id/unpluggedSinceLabel"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="10.0dip"
-		android:textSize="18.0dip"
-		android:textStyle="bold"
+		android:textSize="17.0dip"
 		android:textColor="#FFFFFF" />
 
 	<TextView
@@ -73,14 +71,14 @@
 		android:layout_width="fill_parent"
 		android:layout_height="48.0dip"
 		android:layout_marginTop="30.0dip"
-		android:paddingLeft="14.0dip"
+		android:paddingLeft="15.0dip"
 		android:gravity="center_vertical"
 		android:textColor="#FFFFFF"
 		android:textStyle="bold"
 		android:ellipsize="marquee"
 		android:singleLine="true"
 		android:drawableLeft="@drawable/snooze_activate"
-		android:drawablePadding="12.0dip"
+		android:drawablePadding="15.0dip"
 		android:longClickable="true"
 		android:focusable="true"
 		android:clickable="true"
@@ -98,11 +96,14 @@
 		android:background="@drawable/btn_background" />
 	<TextView
 		android:id="@+id/snoozedText"
-		android:text="Snoozed due 22:22, Tue"
+		android:text="Snoozed due Tue, 22:22"
 		android:layout_alignTop="@id/snoozeAlertsButton"
 		android:layout_width="fill_parent"
 		android:layout_height="48.0dip"
+		android:paddingLeft="1.0dip"
 		android:gravity="center_vertical"
+		android:textSize="16.0dip"
+		android:textScaleX="@string/snoozedTextScaleX"
 		android:textColor="#FFFFFF"
 		android:singleLine="true"
 		android:visibility="invisible"

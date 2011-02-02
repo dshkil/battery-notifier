@@ -8,6 +8,8 @@
 	<item name="default_alert_interval" type="integer" format="integer">@string/default_alert_interval</item>
 	<item name="default_show_level_in_icon" type="bool" format="boolean">false</item>
 
+	<item format="float" type="string" name="snoozedTextScaleX">1.0</item>
+
 	<declare-styleable name="SeekBarPreference">
 		<attr name="max" format="integer" />
 		<attr name="dialogMessage" format="string" />

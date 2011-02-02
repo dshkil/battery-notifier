@@ -2,23 +2,90 @@ package com.shkil.battery;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.BatteryManager;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class DashboardActivity extends Activity implements OnClickListener {
 
-	public static final int DASHBOARD_DIALOG_ID = 1;
+	static final int DASHBOARD_DIALOG_ID = 1;
 
-	protected Dialog dialog;
+	Dialog dialog;
+	TextView batteryLevelValue;
+	TextView batteryStatusValue;
+
+	final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+		private int lastRawLevel;
+		private int lastStatus;
+		private int lastPlugged;
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			if (level != lastRawLevel) {
+				lastRawLevel = level;
+				int percent = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+				batteryLevelValue.setText(percent + "%");
+			}
+			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
+			int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+			if (status != lastStatus || plugged != lastPlugged) {
+				lastStatus = status;
+				lastPlugged = plugged;
+				int statusStringId;
+				switch (status) {
+					case BatteryManager.BATTERY_STATUS_CHARGING:
+						statusStringId = R.string.statusCharging;
+						break;
+					case BatteryManager.BATTERY_STATUS_NOT_CHARGING:
+						statusStringId = R.string.statusNotCharging;
+						break;
+					case BatteryManager.BATTERY_STATUS_FULL:
+						statusStringId = R.string.statusFullyCharged;
+						break;
+					case BatteryManager.BATTERY_STATUS_DISCHARGING:
+						statusStringId = R.string.statusDischarging;
+						break;
+					default:
+						statusStringId = R.string.statusUnknown;
+				}
+				batteryStatusValue.setText(statusStringId);
+				if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+					batteryStatusValue.append(getString(R.string.usb_suffix));
+				}
+			}
+		}
+	};
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		if (settings.getBoolean(Settings.STARTED, true) && !BatteryNotifierService.isRunning(this)) {
+			new Thread() {
+				@Override
+				public void run() {
+					BatteryNotifierService.start(DashboardActivity.this);
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(DashboardActivity.this, R.string.service_started, Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+			}.start();
+		}
 		showDialog(DASHBOARD_DIALOG_ID);
 	}
 
@@ -28,45 +95,41 @@ public class DashboardActivity extends Activity implements OnClickListener {
 			@Override
 			public boolean onCreateOptionsMenu(Menu menu) {
 				menu.add("Battery use").setIntent(
-					new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary")
+						new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary")
 				);
 				menu.add("Battery info").setIntent(
-					new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
+						new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
 				);
 				return true;
 			}
 			@Override
-			public void onDetachedFromWindow() {
-				super.onDetachedFromWindow();
-				finish();
+			protected void onStart() {
+				super.onStart();
+				registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+			}
+			@Override
+			protected void onStop() {
+				unregisterReceiver(batteryInfoReceiver);
+				super.onStop();
+				DashboardActivity.this.finish();
 			}
 		};
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.dashboard);
+		batteryLevelValue = (TextView) dialog.findViewById(R.id.batteryLevelValue);
+		batteryStatusValue = (TextView) dialog.findViewById(R.id.batteryStatusValue);
 		View snoozeAlertsButton = dialog.findViewById(R.id.snoozeAlertsButton);
 		snoozeAlertsButton.setOnClickListener(this);
 		View unsnoozeAlertsButton = dialog.findViewById(R.id.unsnoozeAlertsButton);
 		unsnoozeAlertsButton.setOnClickListener(this);
 		View settingsButton = dialog.findViewById(R.id.settingsButton);
 		settingsButton.setOnClickListener(this);
-//		View batteryUseButton = dialog.findViewById(R.id.batteryUseButton);
-//		batteryUseButton.setOnClickListener(this);
-//		View batteryInfoButton = dialog.findViewById(R.id.batteryInfoButton);
-//		batteryInfoButton.setOnClickListener(this);
 		return dialog;
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-//			case R.id.batteryUseButton:
-//				startActivity(new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary"));
-//				//finish();
-//				break;
-//			case R.id.batteryInfoButton:
-//				startActivity(new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo"));
-//				//finish();
-//				break;
 			case R.id.snoozeAlertsButton: {
 				View snoozeAlertsButton = dialog.findViewById(R.id.snoozeAlertsButton);
 				View snoozedText = dialog.findViewById(R.id.snoozedText);

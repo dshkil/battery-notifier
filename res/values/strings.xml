@@ -54,4 +54,10 @@
 <string name="always_show_notification">Always show notification</string>
 <string name="always_show_notification_on">Always show notification when running</string>
 <string name="always_show_notification_off">Show notification in specified cases only</string>
+<string name="statusNotCharging">Not charging</string>
+<string name="statusCharging">Charging</string>
+<string name="statusFullyCharged">Fully charged</string>
+<string name="statusDischarging">Discharging</string>
+<string name="statusUnknown">Unknown</string>
+<string name="usb_suffix">\u0020(USB)</string>
 </resources>

@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -19,7 +18,7 @@ import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
-	final Handler handler = new Handler();
+//	final Handler handler = new Handler();
 	Preference serviceStatePreference;
 	Preference serviceOptionsPreference;
 
@@ -64,11 +63,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		settings.registerOnSharedPreferenceChangeListener(this);
 		updateServiceStatus(false);
 		if (settings.getBoolean(Settings.STARTED, true) && !BatteryNotifierService.isRunning(this)) {
+			//FIXME obsolete
 			new Thread() {
 				@Override
 				public void run() {
 					BatteryNotifierService.start(SettingsActivity.this);
-					handler.post(new Runnable() {
+					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							Toast.makeText(SettingsActivity.this, R.string.service_started, Toast.LENGTH_SHORT).show();
