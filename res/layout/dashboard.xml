@@ -120,4 +120,41 @@
 		android:textStyle="bold"
 		android:background="@drawable/btn_background" />
 
+	<LinearLayout
+		android:id="@+id/snoozeOptions"
+		android:layout_alignTop="@id/snoozeAlertsButton"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignBottom="@id/settingsButton"
+		android:visibility="invisible">
+		<Button
+			android:id="@+id/snoozeDue"
+			android:text="Snooze due..."
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:layout_marginRight="2.5dip"
+			android:textScaleX="0.9"
+			android:textColor="#FFFFFF"
+			android:background="@drawable/btn_background" />
+		<Button
+			android:id="@+id/snoozeFor"
+			android:text="Snooze for..."
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:layout_marginLeft="2.5dip"
+			android:layout_marginRight="2.5dip"
+			android:textScaleX="0.9"
+			android:textColor="#FFFFFF"
+			android:background="@drawable/btn_background" />
+		<ImageButton
+			android:id="@+id/snoozeOff"
+			android:layout_width="48.0dip"
+			android:layout_height="fill_parent"
+			android:layout_marginLeft="2.5dip"
+			android:src="@drawable/snooze_deactivate"
+			android:background="@drawable/btn_background" />
+	</LinearLayout>
+
 </RelativeLayout>

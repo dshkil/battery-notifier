@@ -134,9 +134,12 @@ public class DashboardActivity extends Activity implements OnClickListener {
 				View snoozeAlertsButton = dialog.findViewById(R.id.snoozeAlertsButton);
 				View snoozedText = dialog.findViewById(R.id.snoozedText);
 				View unsnoozeAlertsButton = dialog.findViewById(R.id.unsnoozeAlertsButton);
-				unsnoozeAlertsButton.setVisibility(View.VISIBLE);
-				snoozedText.setVisibility(View.VISIBLE);
 				snoozeAlertsButton.setVisibility(View.INVISIBLE);
+//				unsnoozeAlertsButton.setVisibility(View.VISIBLE);
+//				snoozedText.setVisibility(View.VISIBLE);
+				dialog.findViewById(R.id.settingsButton).setVisibility(View.INVISIBLE);
+				dialog.findViewById(R.id.snoozeOptions).setVisibility(View.VISIBLE);
+//				dialog.findViewById(R.id.snoozeDue).setVisibility(View.VISIBLE);
 				break;
 			}
 			case R.id.unsnoozeAlertsButton: {
@@ -148,6 +151,7 @@ public class DashboardActivity extends Activity implements OnClickListener {
 				snoozeAlertsButton.setVisibility(View.VISIBLE);
 				Animation hyperspaceJump = AnimationUtils.loadAnimation(this, R.anim.unsnooze);
 				snoozeAlertsButton.startAnimation(hyperspaceJump);
+				Toast.makeText(this, "Alerts on", Toast.LENGTH_SHORT);
 				break;
 			}
 			case R.id.settingsButton:
