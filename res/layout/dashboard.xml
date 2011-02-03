@@ -126,6 +126,9 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_alignBottom="@id/settingsButton"
+		android:orientation="vertical"
+		android:paddingLeft="40.0dip"
+		android:paddingRight="40.0dip"
 		android:visibility="invisible">
 		<Button
 			android:id="@+id/snoozeDue"
@@ -133,8 +136,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_weight="1"
-			android:layout_marginRight="2.5dip"
-			android:textScaleX="0.9"
+			android:layout_marginBottom="6.0dip"
 			android:textColor="#FFFFFF"
 			android:background="@drawable/btn_background" />
 		<Button
@@ -143,18 +145,54 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_weight="1"
-			android:layout_marginLeft="2.5dip"
-			android:layout_marginRight="2.5dip"
-			android:textScaleX="0.9"
+			android:layout_marginTop="3.0dip"
+			android:layout_marginBottom="3.0dip"
 			android:textColor="#FFFFFF"
 			android:background="@drawable/btn_background" />
-		<ImageButton
-			android:id="@+id/snoozeOff"
-			android:layout_width="48.0dip"
+		<Button
+			android:id="@+id/snoozeFor"
+			android:text="Snooze for..."
+			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:layout_marginLeft="2.5dip"
-			android:src="@drawable/snooze_deactivate"
+			android:layout_weight="1"
+			android:layout_marginTop="6.0dip"
+			android:textColor="#FFFFFF"
 			android:background="@drawable/btn_background" />
 	</LinearLayout>
+	
+	<RelativeLayout
+		android:id="@+id/snoozeLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignBottom="@id/settingsButton"
+		android:visibility="gone"
+		android:focusable="true"
+		android:background="#44CCCCCC">
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="48.0dip"
+			android:layout_alignParentBottom="true"
+			android:padding="5.0dip"
+			android:focusable="true"
+			android:background="#AAAAFF">
+			<Button
+				android:id="@+id/snoozeSetButton"
+				android:text="Snooze"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:layout_marginRight="2.5dip"
+				android:background="@drawable/btn_background" />
+			<Button
+				android:id="@+id/snoozeCancelButton"
+				android:text="Cancel"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:layout_marginLeft="2.5dip"
+				android:background="@drawable/btn_background" />
+		</LinearLayout>
+	</RelativeLayout>
 
 </RelativeLayout>

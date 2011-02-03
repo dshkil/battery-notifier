@@ -113,17 +113,20 @@ public class DashboardActivity extends Activity implements OnClickListener {
 				super.onStop();
 				DashboardActivity.this.finish();
 			}
+			@Override
+			public void onBackPressed() {
+				super.onBackPressed();
+			}
 		};
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setContentView(R.layout.dashboard);
 		batteryLevelValue = (TextView) dialog.findViewById(R.id.batteryLevelValue);
 		batteryStatusValue = (TextView) dialog.findViewById(R.id.batteryStatusValue);
-		View snoozeAlertsButton = dialog.findViewById(R.id.snoozeAlertsButton);
-		snoozeAlertsButton.setOnClickListener(this);
-		View unsnoozeAlertsButton = dialog.findViewById(R.id.unsnoozeAlertsButton);
-		unsnoozeAlertsButton.setOnClickListener(this);
-		View settingsButton = dialog.findViewById(R.id.settingsButton);
-		settingsButton.setOnClickListener(this);
+		dialog.findViewById(R.id.snoozeAlertsButton).setOnClickListener(this);
+		dialog.findViewById(R.id.unsnoozeAlertsButton).setOnClickListener(this);
+		dialog.findViewById(R.id.settingsButton).setOnClickListener(this);
+		dialog.findViewById(R.id.snoozeSetButton).setOnClickListener(this);
+		dialog.findViewById(R.id.snoozeCancelButton).setOnClickListener(this);
 		return dialog;
 	}
 
@@ -131,15 +134,16 @@ public class DashboardActivity extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.snoozeAlertsButton: {
-				View snoozeAlertsButton = dialog.findViewById(R.id.snoozeAlertsButton);
 				View snoozedText = dialog.findViewById(R.id.snoozedText);
 				View unsnoozeAlertsButton = dialog.findViewById(R.id.unsnoozeAlertsButton);
-				snoozeAlertsButton.setVisibility(View.INVISIBLE);
+//				dialog.findViewById(R.id.snoozeAlertsButton).setVisibility(View.INVISIBLE);
+//				dialog.findViewById(R.id.settingsButton).setVisibility(View.INVISIBLE);
 //				unsnoozeAlertsButton.setVisibility(View.VISIBLE);
 //				snoozedText.setVisibility(View.VISIBLE);
-				dialog.findViewById(R.id.settingsButton).setVisibility(View.INVISIBLE);
-				dialog.findViewById(R.id.snoozeOptions).setVisibility(View.VISIBLE);
+				View snoozeLayout = dialog.findViewById(R.id.snoozeLayout);
+				snoozeLayout.setVisibility(View.VISIBLE);
 //				dialog.findViewById(R.id.snoozeDue).setVisibility(View.VISIBLE);
+				Toast.makeText(this, "sss", Toast.LENGTH_LONG).show();
 				break;
 			}
 			case R.id.unsnoozeAlertsButton: {
@@ -156,6 +160,15 @@ public class DashboardActivity extends Activity implements OnClickListener {
 			}
 			case R.id.settingsButton:
 				startActivity(new Intent(this, SettingsActivity.class));
+				break;
+			case R.id.snoozeSetButton:
+				dialog.findViewById(R.id.snoozeAlertsButton).setVisibility(View.INVISIBLE);
+				dialog.findViewById(R.id.snoozedText).setVisibility(View.VISIBLE);
+				dialog.findViewById(R.id.unsnoozeAlertsButton).setVisibility(View.VISIBLE);
+				dialog.findViewById(R.id.snoozeLayout).setVisibility(View.GONE);
+				break;
+			case R.id.snoozeCancelButton:
+				dialog.findViewById(R.id.snoozeLayout).setVisibility(View.GONE);
 				break;
 		}
 	}
