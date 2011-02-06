@@ -1,4 +1,4 @@
-package com.shkil.battery;
+package com.larryvgs.battery;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;

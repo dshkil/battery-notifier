@@ -1,8 +1,8 @@
-package com.shkil.battery;
+package com.larryvgs.battery;
 
-import static com.shkil.battery.Settings.LOW_CHARGE_RINGTONE;
-import static com.shkil.battery.Settings.LOW_CHARGE_SOUND_MODE;
-import static com.shkil.battery.Settings.LOW_CHARGE_VIBRO_MODE;
+import static com.larryvgs.battery.Settings.LOW_CHARGE_RINGTONE;
+import static com.larryvgs.battery.Settings.LOW_CHARGE_SOUND_MODE;
+import static com.larryvgs.battery.Settings.LOW_CHARGE_VIBRO_MODE;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

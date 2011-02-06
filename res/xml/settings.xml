@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res/com.shkil.battery"
+	xmlns:app="http://schemas.android.com/apk/res/com.larryvgs.battery"
 	android:title="@string/settings_title">
 
 <PreferenceScreen
@@ -109,13 +109,6 @@
 		android:defaultValue="@bool/default_always_show_notification"
 		android:summaryOn="@string/always_show_notification_on"
 		android:summaryOff="@string/always_show_notification_off"
-	/>
-	<CheckBoxPreference
-		android:key="show_level_in_icon"
-		android:title="@string/show_level_in_icon"
-		android:defaultValue="@bool/default_show_level_in_icon"
-		android:summaryOn="@string/show_level_in_icon_on"
-		android:summaryOff="@string/show_level_in_icon_off"
 	/>
 	<Preference
 		android:key="about"

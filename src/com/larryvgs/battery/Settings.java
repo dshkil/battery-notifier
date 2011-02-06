@@ -1,4 +1,4 @@
-package com.shkil.battery;
+package com.larryvgs.battery;
 
 import android.content.SharedPreferences;
 import android.media.AudioManager;

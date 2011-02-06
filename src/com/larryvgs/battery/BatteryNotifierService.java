@@ -1,9 +1,8 @@
-package com.shkil.battery;
+package com.larryvgs.battery;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
@@ -356,13 +355,310 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	public static int getBatteryIcon(int level) {
-		if (level >= 90) {
-			return R.drawable.battery_good;
+		if (level == 100) {
+			return R.drawable.g100;
 		}
-		if (level >= 50) {
-			return R.drawable.battery_above_half;
+		if (level == 99) {
+			return R.drawable.g99;
 		}
-		return level > 25 ? R.drawable.battery_below_half : R.drawable.battery_low;
+		if (level == 98) {
+			return R.drawable.g98;
+		}
+		if (level == 97) {
+			return R.drawable.g97;
+		}
+		if (level == 96) {
+			return R.drawable.g96;
+		}
+		if (level == 95) {
+			return R.drawable.g95;
+		}
+		if (level == 94) {
+			return R.drawable.g94;
+		}
+		if (level == 93) {
+			return R.drawable.g93;
+		}
+		if (level == 92) {
+			return R.drawable.g92;
+		}
+		if (level == 91) {
+			return R.drawable.g91;
+		}
+		if (level == 90) {
+			return R.drawable.g90;
+		}
+		if (level == 89) {
+			return R.drawable.g89;
+		}
+		if (level == 88) {
+			return R.drawable.g88;
+		}
+		if (level == 87) {
+			return R.drawable.g87;
+		}
+		if (level == 86) {
+			return R.drawable.g86;
+		}
+		if (level == 85) {
+			return R.drawable.g85;
+		}
+		if (level == 84) {
+			return R.drawable.g84;
+		}
+		if (level == 83) {
+			return R.drawable.g83;
+		}
+		if (level == 82) {
+			return R.drawable.g82;
+		}
+		if (level == 81) {
+			return R.drawable.g81;
+		}
+		if (level == 80) {
+			return R.drawable.g80;
+		}
+		if (level == 79) {
+			return R.drawable.g79;
+		}
+		if (level == 78) {
+			return R.drawable.g78;
+		}
+		if (level == 77) {
+			return R.drawable.g77;
+		}
+		if (level == 76) {
+			return R.drawable.g76;
+		}
+		if (level == 75) {
+			return R.drawable.g75;
+		}
+		if (level == 74) {
+			return R.drawable.g74;
+		}
+		if (level == 73) {
+			return R.drawable.g73;
+		}
+		if (level == 72) {
+			return R.drawable.g72;
+		}
+		if (level == 71) {
+			return R.drawable.g71;
+		}
+		if (level == 70) {
+			return R.drawable.g70;
+		}
+		if (level == 69) {
+			return R.drawable.g69;
+		}
+		if (level == 68) {
+			return R.drawable.g68;
+		}
+		if (level == 67) {
+			return R.drawable.g67;
+		}
+		if (level == 66) {
+			return R.drawable.g66;
+		}
+		if (level == 65) {
+			return R.drawable.g65;
+		}
+		if (level == 64) {
+			return R.drawable.g64;
+		}
+		if (level == 63) {
+			return R.drawable.g63;
+		}
+		if (level == 62) {
+			return R.drawable.g62;
+		}
+		if (level == 61) {
+			return R.drawable.g61;
+		}
+		if (level == 60) {
+			return R.drawable.g60;
+		}
+		if (level == 59) {
+			return R.drawable.g59;
+		}
+		if (level == 58) {
+			return R.drawable.g58;
+		}
+		if (level == 57) {
+			return R.drawable.g57;
+		}
+		if (level == 56) {
+			return R.drawable.g56;
+		}
+		if (level == 55) {
+			return R.drawable.g55;
+		}
+		if (level == 54) {
+			return R.drawable.g54;
+		}
+		if (level == 53) {
+			return R.drawable.g53;
+		}
+		if (level == 52) {
+			return R.drawable.g52;
+		}
+		if (level == 51) {
+			return R.drawable.g51;
+		}
+		if (level == 50) {
+			return R.drawable.g50;
+		}
+		if (level == 49) {
+			return R.drawable.b49;
+		}
+		if (level == 48) {
+			return R.drawable.b48;
+		}
+		if (level == 47) {
+			return R.drawable.b47;
+		}
+		if (level == 46) {
+			return R.drawable.b46;
+		}
+		if (level == 45) {
+			return R.drawable.b45;
+		}
+		if (level == 44) {
+			return R.drawable.b44;
+		}
+		if (level == 43) {
+			return R.drawable.b43;
+		}
+		if (level == 42) {
+			return R.drawable.b42;
+		}
+		if (level == 41) {
+			return R.drawable.b41;
+		}
+		if (level == 40) {
+			return R.drawable.b40;
+		}
+		if (level == 39) {
+			return R.drawable.b39;
+		}
+		if (level == 38) {
+			return R.drawable.b38;
+		}
+		if (level == 37) {
+			return R.drawable.b37;
+		}
+		if (level == 36) {
+			return R.drawable.b36;
+		}
+		if (level == 35) {
+			return R.drawable.b35;
+		}
+		if (level == 34) {
+			return R.drawable.b34;
+		}
+		if (level == 33) {
+			return R.drawable.b33;
+		}
+		if (level == 32) {
+			return R.drawable.b32;
+		}
+		if (level == 31) {
+			return R.drawable.b31;
+		}
+		if (level == 30) {
+			return R.drawable.b30;
+		}
+		if (level == 29) {
+			return R.drawable.o29;
+		}
+		if (level == 28) {
+			return R.drawable.o28;
+		}
+		if (level == 27) {
+			return R.drawable.o27;
+		}
+		if (level == 26) {
+			return R.drawable.o26;
+		}
+		if (level == 25) {
+			return R.drawable.o25;
+		}
+		if (level == 24) {
+			return R.drawable.o24;
+		}
+		if (level == 23) {
+			return R.drawable.o23;
+		}
+		if (level == 22) {
+			return R.drawable.o22;
+		}
+		if (level == 21) {
+			return R.drawable.o21;
+		}
+		if (level == 20) {
+			return R.drawable.o20;
+		}
+		if (level == 19) {
+			return R.drawable.o19;
+		}
+		if (level == 18) {
+			return R.drawable.o18;
+		}
+		if (level == 17) {
+			return R.drawable.o17;
+		}
+		if (level == 16) {
+			return R.drawable.o16;
+		}
+		if (level == 15) {
+			return R.drawable.o15;
+		}
+		if (level == 14) {
+			return R.drawable.r14;
+		}
+		if (level == 13) {
+			return R.drawable.r13;
+		}
+		if (level == 12) {
+			return R.drawable.r12;
+		}
+		if (level == 11) {
+			return R.drawable.r11;
+		}
+		if (level == 10) {
+			return R.drawable.r10;
+		}
+		if (level == 9) {
+			return R.drawable.r9;
+		}
+		if (level == 8) {
+			return R.drawable.r8;
+		}
+		if (level == 7) {
+			return R.drawable.r7;
+		}
+		if (level == 6) {
+			return R.drawable.r6;
+		}
+		if (level == 5) {
+			return R.drawable.r5;
+		}
+		if (level == 4) {
+			return R.drawable.r4;
+		}
+		if (level == 3) {
+			return R.drawable.r3;
+		}
+		if (level == 2) {
+			return R.drawable.r2;
+		}
+		if (level == 1) {
+			return R.drawable.r1;
+		}
+		if (level == 0) {
+			return R.drawable.r0;
+		}
+		return level ;
 	}
 
 	private void showNotification(Notification notification) {

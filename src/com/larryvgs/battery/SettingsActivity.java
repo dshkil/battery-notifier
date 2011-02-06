@@ -1,4 +1,4 @@
-package com.shkil.battery;
+package com.larryvgs.battery;
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;

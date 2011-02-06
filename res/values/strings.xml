@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="app_name">Battery Notifier</string>
-<string name="launcher_name">Battery Notifier</string>
-<string name="settings_title">Battery Notifier settings</string>
+<string name="app_name">Battery Notifier (Big Text)</string>
+<string name="launcher_name">Battery Notifier (Big Text)</string>
+<string name="settings_title">Battery Notifier (Big Text) settings</string>
 <string name="service_options_title">Service options</string>
 <string name="start_service_at_boot">Start service at boot</string>
 <string name="start_service_at_boot_on">The service will start when you turn your phone on</string>
@@ -43,15 +43,25 @@
 <string name="alert_ringtone_is_custom">Custom sound is set</string>
 <string name="miscellaneous">Miscellaneous</string>
 <string name="about">About</string>
-<string name="about_summary">Battery Notifier %1$s</string>
-<string name="about_message">Battery Notifier is intended to indicate battery status and notify about full or low battery charge levels\r\n\r\n\u00A9 2010 Dmytro Shkil</string>
+<string name="about_summary">Battery Notifier (Big Text) %1$s</string>
 <string name="general_options">General options</string>
 <string name="low_battery_options">Low battery charge options</string>
 <string name="full_battery_options">Full battery charge options</string>
 <string name="show_level_in_icon">Show level in the icon</string>
 <string name="show_level_in_icon_on">Remaining charge level will be shown in the status bar icon</string>
 <string name="show_level_in_icon_off">Remaining charge level will NOT be shown in the status bar icon</string>
-<string name="always_show_notification">Always show notification</string>
-<string name="always_show_notification_on">Always show notification when running</string>
+<string name="always_show_notification">Show notifications</string>
+<string name="always_show_notification_on">Show notification when running\r\nKeep checked for status bar text</string>
 <string name="always_show_notification_off">Show notification in specified cases only</string>
+<string name="about_message">Battery Notifier (Big Text) is a status bar modification to Dmytro Shkil\'s open source app Battery Notifier.
+It replaces the battery icons and optional small battery value text with big, easy to read, colored text while retaining all of the battery charge 
+level notification features of Battery Notifier.\r\n\r\nSTATUS BAR TEXT COLORS:\r\nThe text color is based on the current battery 
+charge value and breaks down as follows:\r\nGreen: 50-100\r\nBlue: 30-49\r\nOrange: 15-29\r\nRed: 0-14\r\n\r\nWhen the battery is fully 
+charged, the fully charged battery icon will appear. After the device is unplugged, 100 in green text will appear.\r\n\r\nThe specific 
+colors chosen were selected and tested to be easy to read whether one has a black, white or gray status bar.&#160;&#160;
+The decision was made to offer only these color options in order to keep the app small and fast.\r\n\r\nThanks mainly to Dmitry\'s work,
+and his generosity in making his app open source, I believe this mod now has one of the easiest to read battery status bar indicators of 
+ANY app, that at the same time puts as little strain on your battery as possible.\r\n\r\nlarryvgs\r\n\r\n\r\nDmytro Shkyl\'s original 
+Battery Notifier can be found at the Android Market if you prefer the original battery icons and text.
+\r\n\r\n\u00A9 2011 Dmytro Shkil/\r\n\u00A9 2011 larryvgs\r\n\</string>
 </resources>

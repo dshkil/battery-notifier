@@ -32,8 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.shkil.battery.R;
+import com.larryvgs.battery.R;
 
 /**
  * Preference which shows a slider bar for choosing a number.
