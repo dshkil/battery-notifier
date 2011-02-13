@@ -96,26 +96,24 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.snoozeAlertsButton: {
-				View snoozeLayout = findViewById(R.id.snoozeLayout);
-				snoozeLayout.setVisibility(View.VISIBLE);
-				break;
-			}
-			case R.id.unsnoozeAlertsButton: {
-				Context context = getContext();
-				View snoozeAlertsButton = findViewById(R.id.snoozeAlertsButton);
-				View snoozedText = findViewById(R.id.snoozedText);
-				View unsnoozeAlertsButton = findViewById(R.id.unsnoozeAlertsButton);
-				unsnoozeAlertsButton.setVisibility(View.INVISIBLE);
-				snoozedText.setVisibility(View.INVISIBLE);
-				snoozeAlertsButton.setVisibility(View.VISIBLE);
-				Animation hyperspaceJump = AnimationUtils.loadAnimation(context, R.anim.unsnooze);
-				snoozeAlertsButton.startAnimation(hyperspaceJump);
-				break;
-			}
 			case R.id.settingsButton: {
 				Context context = getContext();
 				context.startActivity(new Intent(context, SettingsActivity.class));
+				break;
+			}
+			case R.id.snoozeAlertsButton:
+				findViewById(R.id.snoozeLayout).setVisibility(View.VISIBLE);
+				findViewById(R.id.mainLayout).setVisibility(View.INVISIBLE);
+				break;
+			case R.id.unsnoozeAlertsButton: {
+				View snoozeAlertsButton = findViewById(R.id.snoozeAlertsButton);
+				View snoozedText = findViewById(R.id.snoozedText);
+				View unsnoozeAlertsButton = findViewById(R.id.unsnoozeAlertsButton);
+				snoozedText.setVisibility(View.INVISIBLE);
+				snoozeAlertsButton.setVisibility(View.VISIBLE);
+				unsnoozeAlertsButton.setVisibility(View.INVISIBLE);
+				Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.unsnooze);
+				snoozeAlertsButton.startAnimation(hyperspaceJump);
 				break;
 			}
 			case R.id.snoozeSetButton:
@@ -123,9 +121,11 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				findViewById(R.id.snoozedText).setVisibility(View.VISIBLE);
 				findViewById(R.id.unsnoozeAlertsButton).setVisibility(View.VISIBLE);
 				findViewById(R.id.snoozeLayout).setVisibility(View.GONE);
+				findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
 				break;
 			case R.id.snoozeCancelButton:
 				findViewById(R.id.snoozeLayout).setVisibility(View.GONE);
+				findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
 				break;
 		}
 	}
@@ -133,10 +133,10 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Battery use").setIntent(
-				new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary")
+			new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary")
 		);
 		menu.add("Battery info").setIntent(
-				new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
+			new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
 		);
 		return true;
 	}
