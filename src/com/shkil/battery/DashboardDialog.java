@@ -138,6 +138,9 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		menu.add("Battery info").setIntent(
 			new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
 		);
+		menu.add("Battery history").setIntent(
+			new Intent().setClassName("com.android.settings", "com.android.settings.battery_history.BatteryHistory")
+		);
 		return true;
 	}
 
