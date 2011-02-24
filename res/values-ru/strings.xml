@@ -51,4 +51,29 @@
 <string name="always_show_notification">Всегда показывать уведомление</string>
 <string name="always_show_notification_on">Всегда показывать уведомление когда служба запущена</string>
 <string name="always_show_notification_off">Показывать уведомление только в указанных случаях</string>
+<string name="statusNotCharging">Не заряжается</string>
+<string name="statusCharging">Заряжается</string>
+<string name="statusFullyCharged">Полный</string>
+<string name="statusDischarging">Разряжается</string>
+<string name="statusUnknown">Неизвестно</string>
+<string name="muted_until">Без звука до %1$s</string>
+<string name="unknown">Неизвестно</string>
+<string name="unplugged_since">Отключен:</string>
+<string name="plugged_since">Подключен:</string>
+<string name="day_suffix_short">д\u0020</string>
+<string name="alerts_not_muted">Режим запрета звука уведомлений будет отключен</string>
+<string name="alerts_muted_until">Звук уведомлений будет запрещен до\n%1$s</string>
+<string name="charge_level">Уровень заряда:</string>
+<string name="battery_status">Состояние:</string>
+<string name="mute_alerts">Запретить звук...</string>
+<string name="settings">Настройки</string>
+<string name="mute_apply">Применить</string>
+<string name="minus15m">-15м</string>
+<string name="minus1h">-1ч</string>
+<string name="minus12h">-12ч</string>
+<string name="plus15m">+15м</string>
+<string name="plus1h">+1ч</string>
+<string name="plus12h">+12ч</string>
+<string name="mute_alerts_for">Запретить звук на</string>
+
 </resources>

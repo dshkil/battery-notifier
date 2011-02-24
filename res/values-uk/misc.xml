@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<item type="dimen" format="dimension" name="mute_alerts_pad">18.0dip</item>
+
 	<string-array name="interval_titles">
 		<item>5 хвилин</item>
 		<item>10 хвилин</item>

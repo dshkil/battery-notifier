@@ -5,8 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
+import android.os.Build.VERSION;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,27 +19,34 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
 class DashboardDialog extends Dialog implements OnClickListener {
 
-	TextView batteryLevelValue;
-	TextView batteryStatusValue;
-
-	final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+	private final class BatteryInfoReceiver extends BroadcastReceiver {
 		private int lastRawLevel;
 		private int lastStatus;
-		private int lastPlugged;
+		private int lastPlugged = -1;
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(final Context context, Intent intent) {
 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 			if (level != lastRawLevel) {
 				lastRawLevel = level;
 				int percent = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 				batteryLevelValue.setText(percent + "%");
+				int batteryLevelBgResource;
+				if (percent <= lowBatteryLevel) {
+					batteryLevelBgResource = R.drawable.low_level_bg;
+				}
+				else {
+					batteryLevelBgResource = lowBatteryLevel > 0 ? R.drawable.normal_level_bg : 0;
+				}
+				batteryLevelValue.setBackgroundResource(batteryLevelBgResource);
 			}
 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
-			if (status != lastStatus || plugged != lastPlugged) {
+			boolean plugChanged = plugged != lastPlugged;
+			if (status != lastStatus || plugChanged) {
 				lastStatus = status;
 				lastPlugged = plugged;
 				int statusStringId;
@@ -56,11 +68,34 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				}
 				batteryStatusValue.setText(statusStringId);
 				if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
-					batteryStatusValue.append(getContext().getString(R.string.usb_suffix));
+					batteryStatusValue.append(context.getString(R.string.usb_suffix));
+				}
+				if (plugChanged && BatteryNotifierService.isStarted()) {
+					updatePluggedState(plugged);
 				}
 			}
 		}
-	};
+		public void reset() {
+			lastRawLevel = lastStatus = 0;
+			lastPlugged = -1;
+		}
+		public int getPluggedState() {
+			return lastPlugged;
+		}
+	}
+
+	static final String TAG = DashboardDialog.class.getSimpleName();
+
+	SharedPreferences settings;
+	int lowBatteryLevel;
+	TextView batteryLevelValue;
+	TextView batteryStatusValue;
+	TextView unpluggedSinceValue;
+	TextView unpluggedSinceLabel;
+	long activityPausedAt;
+	long muteDuration = 3600000;
+
+	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();
 
 	public DashboardDialog(Context context) {
 		super(context);
@@ -71,24 +106,25 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.dashboard);
-		findViewById(R.id.snoozeAlertsButton).setOnClickListener(this);
-		findViewById(R.id.unsnoozeAlertsButton).setOnClickListener(this);
-		findViewById(R.id.settingsButton).setOnClickListener(this);
-		findViewById(R.id.snoozeSetButton).setOnClickListener(this);
-		findViewById(R.id.snoozeCancelButton).setOnClickListener(this);
 		batteryLevelValue = (TextView) findViewById(R.id.batteryLevelValue);
 		batteryStatusValue = (TextView) findViewById(R.id.batteryStatusValue);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		getContext().registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		unpluggedSinceLabel = (TextView) findViewById(R.id.unpluggedSinceLabel);
+		unpluggedSinceValue = (TextView) findViewById(R.id.unpluggedSinceValue);
+		findViewById(R.id.muteAlertsButton).setOnClickListener(this);
+		findViewById(R.id.unmuteAlertsButton).setOnClickListener(this);
+		findViewById(R.id.settingsButton).setOnClickListener(this);
+		findViewById(R.id.muteSetButton).setOnClickListener(this);
+		findViewById(R.id.startServiceButton).setOnClickListener(this);
+		findViewById(R.id.muteMinus15mButton).setOnClickListener(this);
+		findViewById(R.id.muteMinus1hButton).setOnClickListener(this);
+		findViewById(R.id.muteMinus12hButton).setOnClickListener(this);
+		findViewById(R.id.mutePlus15mButton).setOnClickListener(this);
+		findViewById(R.id.mutePlus1hButton).setOnClickListener(this);
+		findViewById(R.id.mutePlus12hButton).setOnClickListener(this);
 	}
 
 	@Override
 	protected void onStop() {
-		getContext().unregisterReceiver(batteryInfoReceiver);
 		super.onStop();
 		getOwnerActivity().finish();
 	}
@@ -101,47 +137,252 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				context.startActivity(new Intent(context, SettingsActivity.class));
 				break;
 			}
-			case R.id.snoozeAlertsButton:
-				findViewById(R.id.snoozeLayout).setVisibility(View.VISIBLE);
+			case R.id.muteAlertsButton:
+				updateMuteDuration();
+				findViewById(R.id.muteLayout).setVisibility(View.VISIBLE);
 				findViewById(R.id.mainLayout).setVisibility(View.INVISIBLE);
 				break;
-			case R.id.unsnoozeAlertsButton: {
-				View snoozeAlertsButton = findViewById(R.id.snoozeAlertsButton);
-				View snoozedText = findViewById(R.id.snoozedText);
-				View unsnoozeAlertsButton = findViewById(R.id.unsnoozeAlertsButton);
-				snoozedText.setVisibility(View.INVISIBLE);
-				snoozeAlertsButton.setVisibility(View.VISIBLE);
-				unsnoozeAlertsButton.setVisibility(View.INVISIBLE);
-				Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.unsnooze);
-				snoozeAlertsButton.startAnimation(hyperspaceJump);
+			case R.id.muteSetButton:
+				if (muteDuration > 0) {
+					settings.edit().putLong(Settings.MUTED_UNTIL_TIME, System.currentTimeMillis() + muteDuration).commit();
+					showMuted();
+				}
+				else {
+					settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
+					showUnmuted(false);
+				}
+				break;
+			case R.id.unmuteAlertsButton:
+				settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
+				showUnmuted(true);
+				break;
+			case R.id.startServiceButton: {
+				Context context = getContext();
+				BatteryNotifierService.start(context);
+				Toast.makeText(context, R.string.service_started, Toast.LENGTH_SHORT).show();
+				unpluggedSinceLabel.setText(batteryInfoReceiver.getPluggedState() > 0 ? R.string.plugged_since : R.string.unplugged_since);
+				unpluggedSinceValue.setText(R.string.unknown);
+				updateRunningState();
 				break;
 			}
-			case R.id.snoozeSetButton:
-				findViewById(R.id.snoozeAlertsButton).setVisibility(View.INVISIBLE);
-				findViewById(R.id.snoozedText).setVisibility(View.VISIBLE);
-				findViewById(R.id.unsnoozeAlertsButton).setVisibility(View.VISIBLE);
-				findViewById(R.id.snoozeLayout).setVisibility(View.GONE);
-				findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
-				break;
-			case R.id.snoozeCancelButton:
-				findViewById(R.id.snoozeLayout).setVisibility(View.GONE);
-				findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
+			case R.id.muteMinus15mButton:
+			case R.id.muteMinus1hButton:
+			case R.id.muteMinus12hButton:
+			case R.id.mutePlus15mButton:
+			case R.id.mutePlus1hButton:
+			case R.id.mutePlus12hButton:
+				muteDuration += Long.parseLong(view.getTag().toString());
+				updateMuteDuration();
 				break;
 		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("Battery use").setIntent(
+		menu.add(R.string.battery_use).setIntent(
 			new Intent().setClassName("com.android.settings", "com.android.settings.fuelgauge.PowerUsageSummary")
 		);
-		menu.add("Battery info").setIntent(
+		menu.add(R.string.battery_info).setIntent(
 			new Intent().setClassName("com.android.settings", "com.android.settings.BatteryInfo")
 		);
-		menu.add("Battery history").setIntent(
+		menu.add(R.string.battery_history).setIntent(
 			new Intent().setClassName("com.android.settings", "com.android.settings.battery_history.BatteryHistory")
 		);
 		return true;
+	}
+
+	void showMuted() {
+		Context context = getContext();
+		long mutedUntil = settings.getLong(Settings.MUTED_UNTIL_TIME, 0);
+		String mutedUntilStr = DateUtils.formatDateTime(context, mutedUntil,
+			DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH
+		);
+		TextView snoozedText = (TextView) findViewById(R.id.mutedText);
+		snoozedText.setText(context.getString(R.string.muted_until, mutedUntilStr));
+		findViewById(R.id.muteAlertsButton).setVisibility(View.INVISIBLE);
+		snoozedText.setVisibility(View.VISIBLE);
+		findViewById(R.id.unmuteAlertsButton).setVisibility(View.VISIBLE);
+		findViewById(R.id.muteLayout).setVisibility(View.GONE);
+		findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
+	}
+
+	void showUnmuted(boolean animate) {
+		View snoozeAlertsButton = findViewById(R.id.muteAlertsButton);
+		findViewById(R.id.mutedText).setVisibility(View.INVISIBLE);
+		snoozeAlertsButton.setVisibility(View.VISIBLE);
+		findViewById(R.id.unmuteAlertsButton).setVisibility(View.INVISIBLE);
+		findViewById(R.id.muteLayout).setVisibility(View.GONE);
+		findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
+		if (animate) {
+			Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.unsnooze);
+			snoozeAlertsButton.startAnimation(hyperspaceJump);
+		}
+	}
+
+	public void onActivityResume() {
+		if (activityPausedAt > 0) {
+			if (System.currentTimeMillis() - activityPausedAt > 60000) {
+				View snoozeLayout = findViewById(R.id.muteLayout);
+				if (snoozeLayout.getVisibility() == View.VISIBLE) {
+					snoozeLayout.setVisibility(View.GONE);
+					findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
+				}
+			}
+			activityPausedAt = 0;
+		}
+		Context context = getContext();
+		settings = PreferenceManager.getDefaultSharedPreferences(context);
+		lowBatteryLevel = settings.getInt(Settings.LOW_BATTERY_LEVEL, context.getResources().getInteger(R.integer.default_low_level));
+		updateRunningState();
+		batteryInfoReceiver.reset();
+		context.registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+	}
+
+	public void onActivityPause() {
+		getContext().unregisterReceiver(batteryInfoReceiver);
+		activityPausedAt = System.currentTimeMillis();
+	}
+
+	void updateRunningState() {
+		if (BatteryNotifierService.isRunning(getContext())) {
+			findViewById(R.id.startServiceButton).setVisibility(View.INVISIBLE);
+			long mutedUntil = settings.getLong(Settings.MUTED_UNTIL_TIME, 0);
+			if (System.currentTimeMillis() < mutedUntil) {
+				showMuted();
+			}
+			else {
+				showUnmuted(false);
+			}
+		}
+		else {
+			unpluggedSinceValue.setText(null);
+			unpluggedSinceLabel.setText(R.string.service_is_stopped_short);
+			findViewById(R.id.mutedText).setVisibility(View.INVISIBLE);
+			findViewById(R.id.muteAlertsButton).setVisibility(View.INVISIBLE);
+			findViewById(R.id.unmuteAlertsButton).setVisibility(View.INVISIBLE);
+			findViewById(R.id.startServiceButton).setVisibility(View.VISIBLE);
+		}
+	}
+
+	void updatePluggedState(int pluggedState) {
+		unpluggedSinceLabel.setText(pluggedState > 0 ? R.string.plugged_since : R.string.unplugged_since);
+		unpluggedSinceValue.setText(R.string.unknown);
+		if (BatteryNotifierService.isStarted()) {
+			if (pluggedState > 0) {
+				new Thread() {
+					@Override
+					public void run() {
+						for (int i = 0; i < 40; i++) {
+							final long sinceTime = BatteryNotifierService.getPluggedSince();
+							if (sinceTime > 0) {
+								getOwnerActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										setPluggedSince(sinceTime);
+									}
+								});
+								break;
+							}
+							safeSleep(250);
+						}
+					}
+				}.start();
+			}
+			else {
+				new Thread() {
+					@Override
+					public void run() {
+						for (int i = 0; i < 40; i++) {
+							final long sinceTime = BatteryNotifierService.getUnpluggedSince();
+							if (sinceTime > 0) {
+								getOwnerActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										setPluggedSince(sinceTime);
+									}
+								});
+								break;
+							}
+							safeSleep(250);
+						}
+					}
+				}.start();
+			}
+		}
+	}
+
+	void setPluggedSince(long since) {
+		if (since > 0) {
+			String dateTimeStr = DateUtils.formatDateTime(getContext(), since,
+				DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH
+			);
+			unpluggedSinceValue.setText(dateTimeStr);
+		}
+		else {
+			unpluggedSinceValue.setText(R.string.unknown);
+		}
+	}
+
+	void updateMuteDuration() { //TODO perform updates when time goes
+		if (muteDuration <= 0) {
+			muteDuration = 0;
+			TextView muteDurationView = (TextView) findViewById(R.id.muteDuration);
+			TextView muteUntilView = (TextView) findViewById(R.id.muteUntilText);
+			muteDurationView.setText("0:00");
+			muteUntilView.setText(R.string.alerts_not_muted);
+		}
+		else {
+			TextView muteDurationView = (TextView) findViewById(R.id.muteDuration);
+			TextView muteUntilView = (TextView) findViewById(R.id.muteUntilText);
+			int durationInMinutes = (int) (muteDuration / 60000);
+			int days = durationInMinutes / 1440;
+			int minutes = durationInMinutes % 60;
+			int hours = durationInMinutes % 1440 / 60;
+			StringBuilder durationStr = new StringBuilder();
+			if (days > 0) {
+				durationStr.append(days).append(getContext().getString(R.string.day_suffix_short));
+			}
+			durationStr.append(hours).append(":");
+			if (minutes < 10) {
+				durationStr.append("0");
+			}
+			durationStr.append(minutes);
+			muteDurationView.setText(durationStr);
+			String untilDateTime = DateUtils.formatDateTime(getContext(), System.currentTimeMillis() + muteDuration,
+				DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL
+			);
+			muteUntilView.setText(getContext().getString(R.string.alerts_muted_until, untilDateTime));
+		}
+	}
+
+	static void safeSleep(long time) {
+		try {
+			Thread.sleep(time);
+		}
+		catch (InterruptedException e) {
+			//it's okay
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		if (VERSION.SDK_INT == 4 && keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			onBackPressed();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onBackPressed() {
+		View snoozeLayout = findViewById(R.id.muteLayout);
+		if (snoozeLayout.getVisibility() == View.VISIBLE) {
+			snoozeLayout.setVisibility(View.GONE);
+			findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
+		}
+		else {
+			cancel();
+		}
 	}
 
 }

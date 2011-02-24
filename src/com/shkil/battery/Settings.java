@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class Settings {
 
-	public static final String STARTED = "service_started";
+	public static final String SERVICE_STARTED = "service_started";
 	public static final String START_AT_BOOT = "start_at_boot";
 	public static final String ALWAYS_SHOW_NOTIFICATION = "always_show_notification";
 	public static final String LOW_BATTERY_LEVEL = "low_battery_level";
@@ -21,6 +21,8 @@ public class Settings {
 	public static final String FULL_CHARGE_SOUND_MODE = "full_charge_sound_mode";
 	public static final String FULL_CHARGE_VIBRO_MODE = "full_charge_vibro_mode";
 	public static final String FULL_CHARGE_RINGTONE = "full_charge_ringtone";
+
+	public static final String MUTED_UNTIL_TIME = "muted_until_time";
 
 	public static final int MODE_SYSTEM = 0;
 	public static final int MODE_ALWAYS = 1;

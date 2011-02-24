@@ -20,6 +20,7 @@
 <string name="service_stopped">Service has been stopped</string>
 <string name="service_is_running">Service is currently running</string>
 <string name="service_is_stopped">Service is currently stopped. Notifications will NOT be shown</string>
+<string name="service_is_stopped_short">Service is currently stopped</string>
 <string name="battery_level_is_low">Low on battery charge</string>
 <string name="battery_level_is_okay">Battery charge is okay</string>
 <string name="battery_level_is_full">Battery is fully charged</string>
@@ -60,4 +61,26 @@
 <string name="statusDischarging">Discharging</string>
 <string name="statusUnknown">Unknown</string>
 <string name="usb_suffix">\u0020(USB)</string>
+<string name="muted_until">Muted until %1$s</string>
+<string name="unknown">Unknown</string>
+<string name="unplugged_since">Unplugged since:</string>
+<string name="plugged_since">Plugged since:</string>
+<string name="battery_use">Battery use</string>
+<string name="battery_history">Battery history</string>
+<string name="battery_info">Battery info</string>
+<string name="day_suffix_short">d\u0020</string>
+<string name="alerts_not_muted">Alerts will NOT be muted</string>
+<string name="alerts_muted_until">Alerts will be muted until\n%1$s</string>
+<string name="charge_level">Charge level:</string>
+<string name="battery_status">Battery status:</string>
+<string name="mute_alerts">Mute alerts...</string>
+<string name="settings">Settings</string>
+<string name="mute_apply">Ok</string>
+<string name="minus15m">-15m</string>
+<string name="minus1h">-1h</string>
+<string name="minus12h">-12h</string>
+<string name="plus15m">+15m</string>
+<string name="plus1h">+1h</string>
+<string name="plus12h">+12h</string>
+<string name="mute_alerts_for">Mute alerts for</string>
 </resources>

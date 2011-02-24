@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
-//	final Handler handler = new Handler();
 	Preference serviceStatePreference;
 	Preference serviceOptionsPreference;
 
@@ -62,22 +61,22 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
 		settings.registerOnSharedPreferenceChangeListener(this);
 		updateServiceStatus(false);
-		if (settings.getBoolean(Settings.STARTED, true) && !BatteryNotifierService.isRunning(this)) {
-			//FIXME obsolete
-			new Thread() {
-				@Override
-				public void run() {
-					BatteryNotifierService.start(SettingsActivity.this);
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(SettingsActivity.this, R.string.service_started, Toast.LENGTH_SHORT).show();
-							updateServiceStatus(false);
-						}
-					});
-				}
-			}.start();
-		}
+//		if (settings.getBoolean(Settings.SERVICE_STARTED, true) && !BatteryNotifierService.isRunning(this)) {
+//			//FIXME obsolete
+//			new Thread() {
+//				@Override
+//				public void run() {
+//					BatteryNotifierService.start(SettingsActivity.this);
+//					runOnUiThread(new Runnable() {
+//						@Override
+//						public void run() {
+//							Toast.makeText(SettingsActivity.this, R.string.service_started, Toast.LENGTH_SHORT).show();
+//							updateServiceStatus(false);
+//						}
+//					});
+//				}
+//			}.start();
+//		}
 	}
 
 	@Override

@@ -29,6 +29,76 @@ import android.util.Log;
 
 public class BatteryNotifierService extends Service implements OnSharedPreferenceChangeListener {
 
+	private final class BatteryInfoReceiver extends BroadcastReceiver {
+		private int lastRawLevel;
+		private int lastStatus;
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
+			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			boolean statusChanged = status != lastStatus;
+			boolean levelChanged = level != lastRawLevel;
+			if (levelChanged || statusChanged) {
+				lastRawLevel = level;
+				//Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
+				if (levelChanged) {
+					batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+					if (showLevelInIcon) {
+						notification.number = batteryLevel;
+					}
+				}
+				if (status == BatteryManager.BATTERY_STATUS_FULL) {
+					if (statusChanged) {
+						setBatteryState(STATE_FULL, false);
+					}
+					else if (notificationVisible) {
+						updateNotification();
+					}
+				}
+				else {
+					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
+						if (statusChanged) {
+							unpluggedSince = 0;
+							if (pluggedSince == 0 && lastStatus > 0) {
+								pluggedSince = System.currentTimeMillis();
+							}
+							setBatteryState(STATE_CHARGING, false);
+						}
+						else {
+							updateNotification();
+						}
+					}
+					else {
+						if (statusChanged) {
+							switch (batteryState) {
+								case STATE_CHARGING:
+								case STATE_FULL:
+									pluggedSince = 0;
+									if (unpluggedSince == 0) {
+										unpluggedSince = System.currentTimeMillis();
+									}
+							}
+						}
+						if (levelChanged) {
+							int oldBatteryState = batteryState;
+							checkBatteryLevel();
+							if (notificationVisible && oldBatteryState == batteryState) {
+								updateNotification();
+							}
+						}
+						else {
+							checkBatteryLevel();
+						}
+					}
+				}
+				lastStatus = status;
+			}
+		}
+		public void reset() {
+			lastRawLevel = lastStatus = 0;
+		}
+	}
+
 	static final String TAG = BatteryNotifierService.class.getSimpleName();
 	static final String CLASS = BatteryNotifierService.class.getName();
 
@@ -44,16 +114,20 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	static final int SINCE_TIME_FORMAT = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH;
 
+	private static volatile boolean serviceStarted;
+
 	// Cached settings values
 	int lowBatteryLevel;
 	int insistInterval;
+	long mutedUntilTimeMillis;
 	boolean alwaysShowNotification;
 	boolean showLevelInIcon;
 
 	// Battery state information
 	int batteryState;
 	int batteryLevel;
-	long unpluggedSince;
+	static volatile long pluggedSince;
+	static volatile long unpluggedSince;
 
 	SharedPreferences settings;
 	NotificationManager notificationService;
@@ -77,69 +151,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 	}
 
-	final BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
-		private int lastRawLevel;
-		private int lastStatus;
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
-			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-			boolean statusChanged = status != lastStatus;
-			boolean levelChanged = level != lastRawLevel;
-			if (levelChanged || statusChanged) {
-				lastStatus = status;
-				lastRawLevel = level;
-//				Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
-				if (levelChanged) {
-					batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
-					if (showLevelInIcon) {
-						notification.number = batteryLevel;
-					}
-				}
-				if (status == BatteryManager.BATTERY_STATUS_FULL) {
-					if (statusChanged) {
-						setBatteryState(STATE_FULL, false);
-					}
-					else if (notificationVisible) {
-						updateNotification();
-					}
-				}
-				else {
-					if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-						if (statusChanged) {
-							unpluggedSince = 0;
-							setBatteryState(STATE_CHARGING, false);
-						}
-						else {
-							updateNotification();
-						}
-					}
-					else {
-						if (statusChanged) {
-							switch (batteryState) {
-								case STATE_CHARGING:
-								case STATE_FULL:
-									unpluggedSince = System.currentTimeMillis();
-							}
-						}
-						if (levelChanged) {
-							int oldBatteryState = batteryState;
-							checkBatteryLevel();
-							if (notificationVisible && oldBatteryState == batteryState) {
-								updateNotification();
-							}
-						}
-						else {
-							checkBatteryLevel();
-						}
-					}
-				}
-			}
-		}
-	};	
+	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();	
 
 	void checkBatteryLevel() {
-//		Log.d(TAG, "checkBatteryLevel(): batteryState=" + batteryState);
 		if (batteryLevel > lowBatteryLevel || lowBatteryLevel == 0) {
 			setBatteryState(STATE_OKAY, false);
 		}
@@ -160,13 +174,16 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, DashboardActivity.class), 0);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		updateValuesFromSettings(settings, null);
+		batteryInfoReceiver.reset();
 		registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		settings.registerOnSharedPreferenceChangeListener(this);
+		serviceStarted = true;
 	}
 
 	@Override
 	public void onDestroy() {
 		Log.i(TAG, "onDestroy");
+		serviceStarted = false;
 		unregisterReceiver(batteryInfoReceiver);
 		if (insistTimerActive) {
 			stopInsist();
@@ -176,6 +193,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (stopForegroundMethod == null) {
 			setForeground(false);
 		}
+		unpluggedSince = 0;
+		pluggedSince = 0;
 	}
 
 	@Override
@@ -250,6 +269,12 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					setInsistInterval(resources.getInteger(R.string.default_alert_interval));
 				}
 			}
+			if (key == null || Settings.MUTED_UNTIL_TIME.equals(key)) {
+				mutedUntilTimeMillis = settings.getLong(Settings.MUTED_UNTIL_TIME, 0);
+				if (insistTimerActive) {
+					startInsist();
+				}
+			}
 		}
 	}
 
@@ -277,6 +302,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 		insistTimerActive = true;
 		long firstTime = System.currentTimeMillis() + insistInterval;
+		if (mutedUntilTimeMillis > 0) {
+			firstTime = Math.max(firstTime, mutedUntilTimeMillis);
+		}
 		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstTime, insistInterval, insistTimerPendingIntent);
 	}
 
@@ -287,6 +315,10 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (player != null) {
 			player.stop();
 		}
+	}
+
+	public static boolean isStarted() {
+		return serviceStarted;
 	}
 
 	public static boolean isRunning(Context context) {
@@ -304,13 +336,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	public static void start(Context context) {
 		context.startService(new Intent(context, BatteryNotifierService.class));
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-		settings.edit().putBoolean(Settings.STARTED, true).commit();
+		settings.edit().putBoolean(Settings.SERVICE_STARTED, true).commit();
 	}
 
 	public static void stop(Context context) {
 		context.stopService(new Intent(context, BatteryNotifierService.class));
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-		settings.edit().putBoolean(Settings.STARTED, false).commit();
+		settings.edit().putBoolean(Settings.SERVICE_STARTED, false).commit();
 	}
 
 	/**
@@ -379,7 +411,6 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			Notification notification = this.notification;
 			if (stateChanged) {
 				this.batteryState = state;
-//				Log.d(TAG, "Battery state became " + state);
 				notification.when = System.currentTimeMillis();
 				if (insistTimerActive) {
 					stopInsist();
@@ -391,7 +422,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					if (stateChanged) {
 						notification.tickerText = getString(R.string.low_battery_level_ticker);
 						updateNotification();
-						alarm(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, Settings.LOW_CHARGE_RINGTONE);
+						if (System.currentTimeMillis() >= mutedUntilTimeMillis) {
+							alarm(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, Settings.LOW_CHARGE_RINGTONE);
+						}
 						if (!Settings.isAlarmDisabled(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, settings)) {
 							startInsist();
 						}
@@ -447,7 +480,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			case STATE_LOW: {
 				notification.icon = getBatteryIcon(batteryLevel);
 				String contentText;
-				long unpluggedSince = this.unpluggedSince;
+				long unpluggedSince = BatteryNotifierService.unpluggedSince;
 				if (unpluggedSince == 0) {
 					contentText = getString(R.string.battery_level_notification_info, batteryLevel);
 				}
@@ -467,7 +500,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			case STATE_OKAY: {
 				notification.icon = getBatteryIcon(batteryLevel);
 				String contentText;
-				long unpluggedSince = this.unpluggedSince;
+				long unpluggedSince = BatteryNotifierService.unpluggedSince;
 				if (unpluggedSince == 0) {
 					contentText = getString(R.string.battery_level_notification_info, batteryLevel);
 				}
@@ -508,6 +541,14 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			player.play(context, ringtone, false, stream);
 		}
 
+	}
+
+	public static long getPluggedSince() {
+		return pluggedSince;
+	}
+
+	public static long getUnpluggedSince() {
+		return unpluggedSince;
 	}
 
 }

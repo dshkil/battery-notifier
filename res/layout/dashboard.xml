@@ -4,7 +4,7 @@
 	android:background="#ee777777"
 	android:padding="30.0dip"
 	android:layout_width="300.0dip"
-	android:layout_height="wrap_content">
+	android:layout_height="275.0dip">
 	
 	<RelativeLayout
 		android:id="@+id/mainLayout"
@@ -13,26 +13,24 @@
 
 		<TextView
 			android:id="@+id/batteryLevelLabel"
-			android:text="Charge level:"
+			android:text="@string/charge_level"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="17.0dip" />
 		<TextView
 			android:id="@+id/batteryLevelValue"
-			android:text=""
 			android:layout_alignParentRight="true"
 			android:layout_alignBaseline="@id/batteryLevelLabel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="17.0dip"
-			android:background="@drawable/low_level_bg"
 			android:paddingLeft="5.0dip"
 			android:paddingRight="5.0dip"
 			android:textColor="#FFFFFF" />
 	
 		<TextView
 			android:id="@+id/batteryStatusLabel"
-			android:text="Battery status:"
+			android:text="@string/battery_status"
 			android:layout_below="@id/batteryLevelValue"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -52,7 +50,7 @@
 	
 		<TextView
 			android:id="@+id/unpluggedSinceLabel"
-			android:text="Unplugged since:"
+			android:text="@string/unplugged_since"
 			android:layout_below="@id/batteryStatusLabel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -60,54 +58,64 @@
 			android:textSize="17.0dip" />
 		<TextView
 			android:id="@+id/unpluggedSinceValue"
-			android:text="Feb 1, 22:22"
+			android:text="@string/unknown"
 			android:layout_alignParentRight="true"
 			android:layout_alignBaseline="@id/unpluggedSinceLabel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="17.0dip"
 			android:textColor="#FFFFFF" />
-	
-		<TextView
-			android:id="@+id/snoozeAlertsButton"
-			android:text="Snooze alerts..."
+
+		<Button
+			android:id="@+id/startServiceButton"
+			android:text="@string/start_service"
 			android:layout_below="@id/unpluggedSinceLabel"
 			android:layout_width="fill_parent"
 			android:layout_height="48.0dip"
-			android:layout_marginTop="30.0dip"
-			android:paddingLeft="15.0dip"
+			android:layout_marginTop="20.0dip"
+			android:gravity="center"
+			android:textColor="#eca85f"
+			android:textStyle="bold"
+			android:background="@drawable/btn_background" />
+		<TextView
+			android:id="@+id/muteAlertsButton"
+			android:text="@string/mute_alerts"
+			android:layout_below="@id/unpluggedSinceLabel"
+			android:layout_width="fill_parent"
+			android:layout_height="48.0dip"
+			android:layout_marginTop="20.0dip"
+			android:paddingLeft="@dimen/mute_alerts_pad"
 			android:gravity="center_vertical"
 			android:textColor="#FFFFFF"
 			android:textStyle="bold"
 			android:ellipsize="marquee"
 			android:singleLine="true"
-			android:drawableLeft="@drawable/snooze_activate"
-			android:drawablePadding="15.0dip"
+			android:drawableLeft="@drawable/mute_activate"
+			android:drawablePadding="@dimen/mute_alerts_pad"
 			android:longClickable="true"
 			android:focusable="true"
 			android:clickable="true"
-			android:visibility="visible"
+			android:visibility="invisible"
 			android:background="@drawable/btn_background" />
 		<ImageButton
-			android:id="@+id/unsnoozeAlertsButton"
-			android:layout_alignTop="@id/snoozeAlertsButton"
+			android:id="@+id/unmuteAlertsButton"
+			android:layout_alignTop="@id/muteAlertsButton"
 			android:layout_alignParentRight="true"
 			android:layout_width="48.0dip"
 			android:layout_height="48.0dip"
-			android:src="@drawable/snooze_deactivate"
+			android:src="@drawable/mute_deactivate"
 			android:gravity="center"
 			android:visibility="invisible"
 			android:background="@drawable/btn_background" />
 		<TextView
-			android:id="@+id/snoozedText"
-			android:text="Snoozed due Tue, 22:22"
-			android:layout_alignTop="@id/snoozeAlertsButton"
+			android:id="@+id/mutedText"
+			android:layout_alignTop="@id/muteAlertsButton"
 			android:layout_width="fill_parent"
 			android:layout_height="48.0dip"
 			android:paddingLeft="1.0dip"
 			android:gravity="center_vertical"
 			android:textSize="16.0dip"
-			android:textScaleX="@string/snoozedTextScaleX"
+			android:textScaleX="@string/mutedTextScaleX"
 			android:textColor="#FFFFFF"
 			android:singleLine="true"
 			android:visibility="invisible"
@@ -115,85 +123,131 @@
 	
 		<Button
 			android:id="@+id/settingsButton"
-			android:text="Settings"
-			android:layout_below="@id/snoozeAlertsButton"
+			android:text="@string/settings"
+			android:layout_below="@id/muteAlertsButton"
 			android:layout_width="fill_parent"
 			android:layout_height="48.0dip"
 			android:layout_marginTop="15.0dip"
 			android:textColor="#FFFFFF"
 			android:textStyle="bold"
 			android:background="@drawable/btn_background" />
-	
-		<LinearLayout
-			android:id="@+id/snoozeOptions"
-			android:layout_alignTop="@id/snoozeAlertsButton"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:layout_alignBottom="@id/settingsButton"
-			android:orientation="vertical"
-			android:paddingLeft="40.0dip"
-			android:paddingRight="40.0dip"
-			android:visibility="invisible">
-			<Button
-				android:id="@+id/snoozeDue"
-				android:text="Snooze due..."
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_weight="1"
-				android:layout_marginBottom="6.0dip"
-				android:textColor="#FFFFFF"
-				android:background="@drawable/btn_background" />
-			<Button
-				android:id="@+id/snoozeFor"
-				android:text="Snooze for..."
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_weight="1"
-				android:layout_marginTop="3.0dip"
-				android:layout_marginBottom="3.0dip"
-				android:textColor="#FFFFFF"
-				android:background="@drawable/btn_background" />
-			<Button
-				android:id="@+id/snoozeFor"
-				android:text="Snooze for..."
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_weight="1"
-				android:layout_marginTop="6.0dip"
-				android:textColor="#FFFFFF"
-				android:background="@drawable/btn_background" />
-		</LinearLayout>
 	</RelativeLayout>
 
 	<RelativeLayout
-		android:id="@+id/snoozeLayout"
+		android:id="@+id/muteLayout"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:visibility="gone"
-		android:layout_gravity="bottom"
-		android:background="#44CCCCCC">
-		<LinearLayout
+		android:layout_gravity="bottom">
+		<Button
+			android:id="@+id/muteSetButton"
+			android:text="@string/mute_apply"
 			android:layout_width="fill_parent"
 			android:layout_height="48.0dip"
-			android:padding="5.0dip"
-			android:background="#AAAAFF">
+			android:layout_alignParentBottom="true"
+			android:textColor="#FFFFFF"
+			android:textStyle="bold"
+			android:background="@drawable/btn_background" />
+		<LinearLayout
+			android:id="@+id/muteMinusButtonsLayout"
+			android:layout_width="54.0dip"
+			android:layout_height="fill_parent"
+			android:layout_above="@id/muteSetButton"
+			android:layout_alignParentLeft="true"
+			android:layout_marginTop="10.0dip"
+			android:orientation="vertical"
+			android:gravity="center_vertical">
 			<Button
-				android:id="@+id/snoozeSetButton"
-				android:text="Snooze"
+				android:id="@+id/muteMinus15mButton"
+				android:text="@string/minus15m"
+				android:tag="-900000"
 				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_weight="1"
-				android:layout_marginRight="2.5dip"
+				android:layout_height="32.0dip"
+				android:layout_marginBottom="12.0dip"
+				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 			<Button
-				android:id="@+id/snoozeCancelButton"
-				android:text="Cancel"
+				android:id="@+id/muteMinus1hButton"
+				android:text="@string/minus1h"
+				android:tag="-3600000"
 				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_weight="1"
-				android:layout_marginLeft="2.5dip"
+				android:layout_height="32.0dip"
+				android:layout_marginBottom="12.0dip"
+				android:textColor="#FFFFFF"
+				android:background="@drawable/btn_background" />
+			<Button
+				android:id="@+id/muteMinus12hButton"
+				android:text="@string/minus12h"
+				android:tag="-43200000"
+				android:layout_width="fill_parent"
+				android:layout_height="32.0dip"
+				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 		</LinearLayout>
+		<LinearLayout
+			android:id="@+id/mutePlusButtonsLayout"
+			android:layout_width="54.0dip"
+			android:layout_height="fill_parent"
+			android:layout_above="@id/muteSetButton"
+			android:layout_alignParentRight="true"
+			android:layout_marginTop="10.0dip"
+			android:orientation="vertical"
+			android:gravity="center_vertical">
+			<Button
+				android:id="@+id/mutePlus15mButton"
+				android:text="@string/plus15m"
+				android:tag="900000"
+				android:layout_width="fill_parent"
+				android:layout_height="32.0dip"
+				android:layout_marginBottom="12.0dip"
+				android:textColor="#FFFFFF"
+				android:background="@drawable/btn_background" />
+			<Button
+				android:id="@+id/mutePlus1hButton"
+				android:text="@string/plus1h"
+				android:tag="3600000"
+				android:layout_width="fill_parent"
+				android:layout_height="32.0dip"
+				android:layout_marginBottom="12.0dip"
+				android:textColor="#FFFFFF"
+				android:background="@drawable/btn_background" />
+			<Button
+				android:id="@+id/mutePlus12hButton"
+				android:text="@string/plus12h"
+				android:tag="43200000"
+				android:layout_width="fill_parent"
+				android:layout_height="32.0dip"
+				android:textColor="#FFFFFF"
+				android:background="@drawable/btn_background" />
+		</LinearLayout>
+		<TextView
+			android:id="@+id/muteDurationLabel"
+			android:text="@string/mute_alerts_for"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:textColor="#FFFFFF"
+			android:textSize="16.0dip"
+			android:gravity="center" />
+		<TextView
+			android:id="@+id/muteDuration"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/muteDurationLabel"
+			android:gravity="center"
+			android:layout_marginTop="3.0dip"
+			android:textColor="#FFFFFF"
+			android:textStyle="bold"
+			android:textSize="28.0dip" />
+		<TextView
+			android:id="@+id/muteUntilText"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/muteMinusButtonsLayout"
+			android:layout_toLeftOf="@id/mutePlusButtonsLayout"
+			android:layout_below="@id/muteDuration"
+			android:layout_marginTop="15.0dip"
+			android:gravity="center" />
 	</RelativeLayout>
 
 </FrameLayout>
