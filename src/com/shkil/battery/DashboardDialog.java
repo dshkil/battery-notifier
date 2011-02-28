@@ -92,10 +92,13 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	TextView batteryStatusValue;
 	TextView unpluggedSinceValue;
 	TextView unpluggedSinceLabel;
+	TextView muteDurationView;
+	TextView muteUntilView;
 	long activityPausedAt;
 	long muteDuration = 3600000;
 
 	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();
+
 
 	public DashboardDialog(Context context) {
 		super(context);
@@ -110,6 +113,8 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		batteryStatusValue = (TextView) findViewById(R.id.batteryStatusValue);
 		unpluggedSinceLabel = (TextView) findViewById(R.id.unpluggedSinceLabel);
 		unpluggedSinceValue = (TextView) findViewById(R.id.unpluggedSinceValue);
+		muteDurationView = (TextView) findViewById(R.id.muteDuration);
+		muteUntilView = (TextView) findViewById(R.id.muteUntilText);
 		findViewById(R.id.muteAlertsButton).setOnClickListener(this);
 		findViewById(R.id.unmuteAlertsButton).setOnClickListener(this);
 		findViewById(R.id.settingsButton).setOnClickListener(this);
@@ -326,21 +331,18 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	void updateMuteDuration() { //TODO perform updates when time goes
 		if (muteDuration <= 0) {
 			muteDuration = 0;
-			TextView muteDurationView = (TextView) findViewById(R.id.muteDuration);
-			TextView muteUntilView = (TextView) findViewById(R.id.muteUntilText);
 			muteDurationView.setText("0:00");
 			muteUntilView.setText(R.string.alerts_not_muted);
 		}
 		else {
-			TextView muteDurationView = (TextView) findViewById(R.id.muteDuration);
-			TextView muteUntilView = (TextView) findViewById(R.id.muteUntilText);
+			Context context = getContext();
 			int durationInMinutes = (int) (muteDuration / 60000);
 			int days = durationInMinutes / 1440;
 			int minutes = durationInMinutes % 60;
 			int hours = durationInMinutes % 1440 / 60;
 			StringBuilder durationStr = new StringBuilder();
 			if (days > 0) {
-				durationStr.append(days).append(getContext().getString(R.string.day_suffix_short));
+				durationStr.append(days).append(context.getString(R.string.day_suffix_short));
 			}
 			durationStr.append(hours).append(":");
 			if (minutes < 10) {
@@ -348,10 +350,10 @@ class DashboardDialog extends Dialog implements OnClickListener {
 			}
 			durationStr.append(minutes);
 			muteDurationView.setText(durationStr);
-			String untilDateTime = DateUtils.formatDateTime(getContext(), System.currentTimeMillis() + muteDuration,
+			String untilDateTime = DateUtils.formatDateTime(context, System.currentTimeMillis() + muteDuration,
 				DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL
 			);
-			muteUntilView.setText(getContext().getString(R.string.alerts_muted_until, untilDateTime));
+			muteUntilView.setText(context.getString(R.string.alerts_muted_until, untilDateTime));
 		}
 	}
 

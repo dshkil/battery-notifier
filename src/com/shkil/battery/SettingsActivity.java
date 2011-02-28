@@ -159,7 +159,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		//low battery ringtone
 		Preference lowRingtonePreference = preferenceScreen.findPreference(Settings.LOW_CHARGE_RINGTONE);
 		String lowRingtone = settings.getString(Settings.LOW_CHARGE_RINGTONE, null);
-		if (lowRingtone == null || System.DEFAULT_NOTIFICATION_URI.toString().equals(lowRingtone)) {
+		if (lowRingtone == null || (System.DEFAULT_NOTIFICATION_URI != null && lowRingtone.equals(System.DEFAULT_NOTIFICATION_URI.toString()))) {
 			lowRingtonePreference.setSummary(R.string.alert_ringtone_is_default);
 		}
 		else {
@@ -168,7 +168,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		//full battery ringtone
 		Preference fullRingtonePreference = preferenceScreen.findPreference(Settings.FULL_CHARGE_RINGTONE);
 		String fullRingtone = settings.getString(Settings.FULL_CHARGE_RINGTONE, null);
-		if (fullRingtone == null || System.DEFAULT_NOTIFICATION_URI.toString().equals(fullRingtone)) {
+		if (fullRingtone == null || (System.DEFAULT_NOTIFICATION_URI != null && fullRingtone.equals(System.DEFAULT_NOTIFICATION_URI.toString()))) {
 			fullRingtonePreference.setSummary(R.string.alert_ringtone_is_default);
 		}
 		else {

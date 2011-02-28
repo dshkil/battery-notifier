@@ -154,7 +154,7 @@
 			android:layout_height="fill_parent"
 			android:layout_above="@id/muteSetButton"
 			android:layout_alignParentLeft="true"
-			android:layout_marginTop="10.0dip"
+			android:layout_marginTop="13.0dip"
 			android:orientation="vertical"
 			android:gravity="center_vertical">
 			<Button
@@ -162,8 +162,8 @@
 				android:text="@string/minus15m"
 				android:tag="-900000"
 				android:layout_width="fill_parent"
-				android:layout_height="32.0dip"
-				android:layout_marginBottom="12.0dip"
+				android:layout_height="38.0dip"
+				android:layout_marginBottom="7.0dip"
 				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 			<Button
@@ -171,8 +171,8 @@
 				android:text="@string/minus1h"
 				android:tag="-3600000"
 				android:layout_width="fill_parent"
-				android:layout_height="32.0dip"
-				android:layout_marginBottom="12.0dip"
+				android:layout_height="38.0dip"
+				android:layout_marginBottom="7.0dip"
 				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 			<Button
@@ -180,7 +180,7 @@
 				android:text="@string/minus12h"
 				android:tag="-43200000"
 				android:layout_width="fill_parent"
-				android:layout_height="32.0dip"
+				android:layout_height="38.0dip"
 				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 		</LinearLayout>
@@ -190,7 +190,7 @@
 			android:layout_height="fill_parent"
 			android:layout_above="@id/muteSetButton"
 			android:layout_alignParentRight="true"
-			android:layout_marginTop="10.0dip"
+			android:layout_marginTop="13.0dip"
 			android:orientation="vertical"
 			android:gravity="center_vertical">
 			<Button
@@ -198,8 +198,8 @@
 				android:text="@string/plus15m"
 				android:tag="900000"
 				android:layout_width="fill_parent"
-				android:layout_height="32.0dip"
-				android:layout_marginBottom="12.0dip"
+				android:layout_height="38.0dip"
+				android:layout_marginBottom="7.0dip"
 				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 			<Button
@@ -207,8 +207,8 @@
 				android:text="@string/plus1h"
 				android:tag="3600000"
 				android:layout_width="fill_parent"
-				android:layout_height="32.0dip"
-				android:layout_marginBottom="12.0dip"
+				android:layout_height="38.0dip"
+				android:layout_marginBottom="7.0dip"
 				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 			<Button
@@ -216,7 +216,7 @@
 				android:text="@string/plus12h"
 				android:tag="43200000"
 				android:layout_width="fill_parent"
-				android:layout_height="32.0dip"
+				android:layout_height="38.0dip"
 				android:textColor="#FFFFFF"
 				android:background="@drawable/btn_background" />
 		</LinearLayout>
@@ -246,7 +246,7 @@
 			android:layout_toRightOf="@id/muteMinusButtonsLayout"
 			android:layout_toLeftOf="@id/mutePlusButtonsLayout"
 			android:layout_below="@id/muteDuration"
-			android:layout_marginTop="15.0dip"
+			android:layout_marginTop="21.0dip"
 			android:gravity="center" />
 	</RelativeLayout>
 
