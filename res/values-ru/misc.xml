@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<item format="float" type="string" name="unpluggedSinceTextScaleX">1.0</item>
 	<item type="dimen" format="dimension" name="mute_alerts_pad">18.0dip</item>
 
 	<string-array name="interval_titles">

@@ -70,7 +70,7 @@
 <string name="battery_info">Battery info</string>
 <string name="day_suffix_short">d\u0020</string>
 <string name="alerts_not_muted">Alerts will NOT be muted</string>
-<string name="alerts_muted_until">Alerts will be muted until\n%1$s</string>
+<string name="alerts_muted_until">Alerts will be muted\nuntil\n%1$s</string>
 <string name="charge_level">Charge level:</string>
 <string name="battery_status">Battery status:</string>
 <string name="mute_alerts">Mute alerts...</string>
