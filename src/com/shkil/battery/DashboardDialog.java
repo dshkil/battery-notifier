@@ -69,6 +69,15 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				batteryStatusValue.setText(statusStringId);
 				if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
 					batteryStatusValue.append(context.getString(R.string.usb_suffix));
+					if (status == BatteryManager.BATTERY_STATUS_FULL) {
+						batteryStatusValue.setTextScaleX(fullyChargedStatusTextScaleX);
+					}
+					else {
+						batteryStatusValue.setTextScaleX(1.0f);
+					}
+				}
+				else {
+					batteryStatusValue.setTextScaleX(1.0f);
 				}
 				if (plugChanged && BatteryNotifierService.isStarted()) {
 					updatePluggedState(plugged);
@@ -96,9 +105,9 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	TextView muteUntilView;
 	long activityPausedAt;
 	long muteDuration = 3600000;
+	float fullyChargedStatusTextScaleX;
 
 	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();
-
 
 	public DashboardDialog(Context context) {
 		super(context);
@@ -126,6 +135,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		findViewById(R.id.mutePlus15mButton).setOnClickListener(this);
 		findViewById(R.id.mutePlus1hButton).setOnClickListener(this);
 		findViewById(R.id.mutePlus12hButton).setOnClickListener(this);
+		fullyChargedStatusTextScaleX = getContext().getResources().getInteger(R.integer.fullyChargedStatusTextScaleX) / 100f;
 	}
 
 	@Override

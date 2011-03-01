@@ -53,7 +53,7 @@
 <string name="always_show_notification_off">Показувати сповіщення лише в зазначених випадках</string>
 <string name="statusNotCharging">Не заряджається</string>
 <string name="statusCharging">Заряджається</string>
-<string name="statusFullyCharged">Заряджена повн.</string>
+<string name="statusFullyCharged">Заряджена повністю</string>
 <string name="statusDischarging">Розряджається</string>
 <string name="statusUnknown">Невідомо</string>
 <string name="muted_until">Без звуку до %1$s</string>

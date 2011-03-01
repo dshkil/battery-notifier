@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<item name="fullyChargedStatusTextScaleX" format="integer" type="integer">72</item>
+	<item format="float" type="string" name="mutedTextScaleX">1.0</item>
 	<item format="float" type="string" name="unpluggedSinceTextScaleX">1.0</item>
 	<item type="dimen" format="dimension" name="mute_alerts_pad">18.0dip</item>
 
