@@ -28,6 +28,7 @@
 		android:dialogTitle="@string/low_battery_level"
 		android:defaultValue="@integer/default_low_level"
 		app:dialogMessage="@string/low_battery_level_hint"
+		app:max="50"
 		app:suffix=" %"
 	/>
 	<ListPreference
