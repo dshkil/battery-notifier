@@ -280,8 +280,8 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	}
 
 	void updatePluggedState(int pluggedState) {
-		unpluggedSinceLabel.setText(pluggedState > 0 ? R.string.plugged_since : R.string.unplugged_since);
-		unpluggedSinceValue.setText(R.string.unknown);
+		unpluggedSinceLabel.setText(null);
+		unpluggedSinceValue.setText(null);
 		if (BatteryNotifierService.isStarted()) {
 			if (pluggedState > 0) {
 				new Thread() {
@@ -293,6 +293,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 								getOwnerActivity().runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
+										unpluggedSinceLabel.setText(R.string.plugged_since);
 										setPluggedSince(sinceTime);
 									}
 								});
@@ -313,6 +314,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 								getOwnerActivity().runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
+										unpluggedSinceLabel.setText(R.string.unplugged_since);
 										setPluggedSince(sinceTime);
 									}
 								});
