@@ -103,6 +103,48 @@
 	/>
 </PreferenceCategory>
 
+<PreferenceCategory
+	android:title="@string/quiet_hours">
+	<CheckBoxPreference
+		android:key="quiet_hours_enabled"
+		android:title="@string/enable_quiet_hours"
+		android:summaryOn="@string/enable_quiet_hours_summary_on"
+		android:summaryOff="@string/enable_quiet_hours_summary_off"
+	/>
+	<com.shkil.preference.TimePickerPreference
+		android:key="quiet_hours_start"
+		android:title="@string/quiet_hours_start"
+		android:dependency="quiet_hours_enabled"
+		android:defaultValue="0"
+		app:summaryFormat="@string/quiet_time_summary"
+		app:summaryEmpty="@string/quiet_time_empty_summary"
+	/>
+	<com.shkil.preference.TimePickerPreference
+		android:key="quiet_hours_end"
+		android:title="@string/quiet_hours_end"
+		android:dependency="quiet_hours_enabled"
+		android:defaultValue="0"
+		app:summaryFormat="@string/quiet_time_summary"
+		app:summaryEmpty="@string/quiet_time_empty_summary"
+	/>
+	<CheckBoxPreference
+		android:key="mute_low_charge_alerts"
+		android:title="@string/mute_low_charge_alerts"
+		android:summaryOn="@string/mute_low_charge_alerts_summary_on"
+		android:summaryOff="@string/mute_low_charge_alerts_summary_off"
+		android:defaultValue="true"
+		android:dependency="quiet_hours_enabled"
+	/>
+	<CheckBoxPreference
+		android:key="mute_full_charge_alerts"
+		android:title="@string/mute_full_charge_alerts"
+		android:summaryOn="@string/mute_full_charge_alerts_summary_on"
+		android:summaryOff="@string/mute_full_charge_alerts_summary_off"
+		android:defaultValue="true"
+		android:dependency="quiet_hours_enabled"
+	/>
+</PreferenceCategory>
+
 <PreferenceCategory android:title="@string/miscellaneous">
 	<CheckBoxPreference
 		android:key="always_show_notification"

@@ -1,5 +1,7 @@
 package com.shkil.battery;
 
+import java.util.TimeZone;
+
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -24,6 +26,18 @@ public class Settings {
 
 	public static final String MUTED_UNTIL_TIME = "muted_until_time";
 
+	public static final String QUIET_HOURS_ENABLED = "quiet_hours_enabled";
+	public static final String MUTE_LOW_CHARGE_ALERTS = "mute_low_charge_alerts";
+	public static final String MUTE_FULL_CHARGE_ALERTS = "mute_full_charge_alerts";
+	/**
+	 * Quiet hours start time in milliseconds since midnight
+	 */
+	public static final String QUIET_HOURS_START = "quiet_hours_start";
+	/**
+	 * Quiet hours end time in milliseconds since midnight
+	 */
+	public static final String QUIET_HOURS_END = "quiet_hours_end";
+
 	public static final int MODE_SYSTEM = 0;
 	public static final int MODE_ALWAYS = 1;
 	public static final int MODE_NEVER = 2;
@@ -35,6 +49,8 @@ public class Settings {
 	public static final int SHOULD_SOUND_SYSTEM = 2;
 
 	private static final String MODE_NEVER_STR = String.valueOf(MODE_NEVER);
+
+	private static final TimeZone timeZone = TimeZone.getDefault();
 
 	public static Uri getRingtone(String ringtoneKey, SharedPreferences settings) {
 		String ringtone = settings.getString(ringtoneKey, null);
@@ -93,6 +109,31 @@ public class Settings {
 		}
 		catch (Exception ex) {
 			Log.w(Settings.class.getSimpleName(), "", ex);
+		}
+		return false;
+	}
+
+	public static boolean isQuietHoursActive(SharedPreferences settings, String muteSubjectKey) {
+		return settings.getBoolean(muteSubjectKey, true) && isQuietHoursActive(settings);
+	}
+
+	public static boolean isQuietHoursActive(SharedPreferences settings) {
+		if (settings.getBoolean(Settings.QUIET_HOURS_ENABLED, false)) {
+			int quietHoursStart = settings.getInt(Settings.QUIET_HOURS_START, -1);
+			if (quietHoursStart >= 0) {
+				int quietHoursEnd = settings.getInt(Settings.QUIET_HOURS_END, -1);
+				if (quietHoursEnd >= 0 && quietHoursStart != quietHoursEnd) {
+					long currentTimeInMillis = System.currentTimeMillis();
+					int timeZoneOffset = timeZone.getOffset(currentTimeInMillis);
+					int timeInMillis = (int) ((currentTimeInMillis + timeZoneOffset) % 86400000);
+					if (quietHoursEnd > quietHoursStart) {
+						return timeInMillis >= quietHoursStart && timeInMillis < quietHoursEnd;
+					}
+					else {
+						return timeInMillis >= quietHoursStart || timeInMillis < quietHoursEnd;
+					}
+				}
+			}
 		}
 		return false;
 	}

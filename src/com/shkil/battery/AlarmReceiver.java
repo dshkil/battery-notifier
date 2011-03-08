@@ -14,7 +14,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-		BatteryNotifierService.alarm(LOW_CHARGE_SOUND_MODE, LOW_CHARGE_VIBRO_MODE, LOW_CHARGE_RINGTONE, settings, context);
+		if (!Settings.isQuietHoursActive(settings, Settings.MUTE_LOW_CHARGE_ALERTS)) {
+			BatteryNotifierService.alarm(LOW_CHARGE_SOUND_MODE, LOW_CHARGE_VIBRO_MODE, LOW_CHARGE_RINGTONE, settings, context);
+		}
 	}
 
 }

@@ -61,22 +61,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		SharedPreferences settings = getPreferenceScreen().getSharedPreferences();
 		settings.registerOnSharedPreferenceChangeListener(this);
 		updateServiceStatus(false);
-//		if (settings.getBoolean(Settings.SERVICE_STARTED, true) && !BatteryNotifierService.isRunning(this)) {
-//			//FIXME obsolete
-//			new Thread() {
-//				@Override
-//				public void run() {
-//					BatteryNotifierService.start(SettingsActivity.this);
-//					runOnUiThread(new Runnable() {
-//						@Override
-//						public void run() {
-//							Toast.makeText(SettingsActivity.this, R.string.service_started, Toast.LENGTH_SHORT).show();
-//							updateServiceStatus(false);
-//						}
-//					});
-//				}
-//			}.start();
-//		}
 	}
 
 	@Override
@@ -87,13 +71,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences settings, String key) {
-		if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)) {
-			updateSummary();
-		}
-		else if (Settings.LOW_CHARGE_VIBRO_MODE.equals(key) || Settings.LOW_CHARGE_SOUND_MODE.equals(key)) {
-			updateSummary();
-		}
-		else if (Settings.FULL_CHARGE_VIBRO_MODE.equals(key) || Settings.FULL_CHARGE_SOUND_MODE.equals(key)) {
+		if (Settings.LOW_BATTERY_LEVEL.equals(key) || Settings.ALERT_INTERVAL.equals(key)
+			|| Settings.LOW_CHARGE_VIBRO_MODE.equals(key) || Settings.LOW_CHARGE_SOUND_MODE.equals(key)
+			|| Settings.FULL_CHARGE_VIBRO_MODE.equals(key) || Settings.FULL_CHARGE_SOUND_MODE.equals(key)
+			|| Settings.QUIET_HOURS_START.equals(key) || Settings.QUIET_HOURS_END.equals(key)) {
 			updateSummary();
 		}
 		else if (Settings.START_AT_BOOT.equals(key)) {
@@ -136,7 +117,21 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		updateModeSummary(fullSoundModePreference);
 		boolean fullSoundEnabled = !String.valueOf(Settings.MODE_NEVER).equals(fullSoundModePreference.getValue());
 		findPreference(Settings.FULL_CHARGE_RINGTONE).setEnabled(fullSoundEnabled);
+//		updateQuietHoursSummary(preferenceScreen, Settings.QUIET_HOURS_START);
+//		updateQuietHoursSummary(preferenceScreen, Settings.QUIET_HOURS_END);
 	}
+
+//	private void updateQuietHoursSummary(PreferenceScreen preferenceScreen, String settingKey) {
+//		DialogPreference preference = (DialogPreference) preferenceScreen.findPreference(settingKey);
+//		int timeInMillis = preference.getSharedPreferences().getInt(settingKey, -1);
+//		if (timeInMillis >= 0) {
+////			String timeString = DateUtils.formatDateTime(this, timeInMillis, DateUtils.FORMAT_SHOW_TIME);
+////			preference.setSummary(getString(R.string.quiet_time_summary, timeString));
+//		}
+//		else {
+//			preference.setSummary(R.string.quiet_time_empty_summary);
+//		}		
+//	}
 
 	private void updateModeSummary(ListPreference preference) {
 		String vibroModeValue = preference.getValue();

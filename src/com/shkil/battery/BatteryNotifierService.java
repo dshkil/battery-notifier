@@ -105,7 +105,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	static final long[] VIBRATE_PATTERN = new long[] {0,50,200,100};
 
 	static final int NOTIFICATION_ID = 1;
-	static final int DEFAULT_NOTIFICATION_FLAGS = Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+	static final int DEFAULT_NOTIFICATION_FLAGS = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
 	static final int STATE_OKAY = 1;
 	static final int STATE_LOW = 2;
@@ -172,6 +172,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		notificationService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notification = new Notification();
 		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, DashboardActivity.class), 0);
+		notification.defaults = 0;
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		updateValuesFromSettings(settings, null);
 		batteryInfoReceiver.reset();
@@ -422,7 +423,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					if (stateChanged) {
 						notification.tickerText = getString(R.string.low_battery_level_ticker);
 						updateNotification();
-						if (System.currentTimeMillis() >= mutedUntilTimeMillis) {
+						if (System.currentTimeMillis() >= mutedUntilTimeMillis && !Settings.isQuietHoursActive(settings, Settings.MUTE_LOW_CHARGE_ALERTS)) {
 							alarm(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, Settings.LOW_CHARGE_RINGTONE);
 						}
 						if (!Settings.isAlarmDisabled(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, settings)) {
@@ -461,7 +462,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 							notification.flags |= Notification.FLAG_AUTO_CANCEL;
 						}
 						updateNotification();
-						if (notifyFullBattery && stateChanged) {
+						if (notifyFullBattery && stateChanged && !Settings.isQuietHoursActive(settings, Settings.MUTE_FULL_CHARGE_ALERTS)) {
 							alarm(Settings.FULL_CHARGE_SOUND_MODE, Settings.FULL_CHARGE_VIBRO_MODE, Settings.FULL_CHARGE_RINGTONE);
 						}
 					}
