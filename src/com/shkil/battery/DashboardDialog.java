@@ -156,6 +156,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				updateMuteDuration();
 				findViewById(R.id.muteLayout).setVisibility(View.VISIBLE);
 				findViewById(R.id.mainLayout).setVisibility(View.INVISIBLE);
+				hidePressMenuForMore();
 				break;
 			case R.id.muteSetButton:
 				if (muteDuration > 0) {
@@ -170,6 +171,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 			case R.id.unmuteAlertsButton:
 				settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
 				showUnmuted(true);
+				hidePressMenuForMore();
 				break;
 			case R.id.startServiceButton: {
 				Context context = getContext();
@@ -190,6 +192,12 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				updateMuteDuration();
 				break;
 		}
+	}
+
+	private void hidePressMenuForMore() {
+		View pressMenuForMore = findViewById(R.id.pressMenuForMore);
+		pressMenuForMore.setVisibility(View.GONE);
+		pressMenuForMore.clearAnimation();
 	}
 
 	@Override
@@ -229,8 +237,8 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		findViewById(R.id.muteLayout).setVisibility(View.GONE);
 		findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
 		if (animate) {
-			Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.unsnooze);
-			snoozeAlertsButton.startAnimation(hyperspaceJump);
+			Animation unmuteAnim = AnimationUtils.loadAnimation(getContext(), R.anim.unmute);
+			snoozeAlertsButton.startAnimation(unmuteAnim);
 		}
 	}
 
@@ -251,6 +259,10 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		updateRunningState();
 		batteryInfoReceiver.reset();
 		context.registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		Animation disappearingAnim = AnimationUtils.loadAnimation(getContext(), R.anim.disappearing);
+		View pressMenuforMoreView = findViewById(R.id.pressMenuForMore);
+		pressMenuforMoreView.startAnimation(disappearingAnim);
+		pressMenuforMoreView.setVisibility(View.VISIBLE);
 	}
 
 	public void onActivityPause() {

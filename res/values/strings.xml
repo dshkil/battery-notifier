@@ -30,8 +30,8 @@
 <string name="battery_is_charging_notification_info">Current charge level is %1$d%%</string>
 <string name="battery_level_is_okay_notification_info">Charge: %1$d%% / Unplugged: %2$s</string>
 <string name="battery_level_is_full_notification_info">Current charge level is %1$d%%</string>
-<string name="sound_mode">Sound</string>
-<string name="vibro_mode">Vibration</string>
+<string name="sound_mode">Sound mode</string>
+<string name="vibro_mode">Vibration mode</string>
 <string name="mode_summary">%1$s</string>
 <string name="mode_always_summary">Always allowed</string>
 <string name="mode_never_summary">Never allowed</string>
@@ -97,4 +97,5 @@
 <string name="mute_full_charge_alerts">Mute full charge alerts</string>
 <string name="mute_full_charge_alerts_summary_on">No full charge alerts will be played during quiet hours</string>
 <string name="mute_full_charge_alerts_summary_off">Full charge alerts will play like normal</string>
+<string name="press_menu_for_more">Press MENU for more items</string>
 </resources>

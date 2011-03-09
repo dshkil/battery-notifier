@@ -75,4 +75,19 @@
 <string name="plus1h">+1год</string>
 <string name="plus12h">+12г</string>
 <string name="mute_alerts_for">Заборонити звук сповіщень на</string>
+<string name="quiet_time_summary">%1$s</string>
+<string name="quiet_time_empty_summary">Не зазначено</string>
+<string name="quiet_hours">Quiet hours</string>
+<string name="enable_quiet_hours">Enable quiet hours</string>
+<string name="enable_quiet_hours_summary_on">Quiet hours will be enforced</string>
+<string name="enable_quiet_hours_summary_off">Alerts will behave like normal</string>
+<string name="quiet_hours_start">Start of quiet hours</string>
+<string name="quiet_hours_end">End of quiet hours</string>
+<string name="mute_low_charge_alerts">Mute low charge alerts</string>
+<string name="mute_low_charge_alerts_summary_on">No low charge alerts will be played during quiet hours</string>
+<string name="mute_low_charge_alerts_summary_off">Low charge alerts will play like normal</string>
+<string name="mute_full_charge_alerts">Mute full charge alerts</string>
+<string name="mute_full_charge_alerts_summary_on">No full charge alerts will be played during quiet hours</string>
+<string name="mute_full_charge_alerts_summary_off">Full charge alerts will play like normal</string>
+<string name="press_menu_for_more">Натисніть МЕНЮ - отримайте більше</string>
 </resources>

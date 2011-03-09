@@ -4,16 +4,17 @@
 	android:background="#ee777777"
 	android:paddingLeft="18.0dip"
 	android:paddingRight="20.0dip"
-	android:paddingTop="30.0dip"
-	android:paddingBottom="30.0dip"
+	android:paddingTop="27.0dip"
+	android:paddingBottom="33.0dip"
 	android:layout_width="300.0dip"
-	android:layout_height="275.0dip">
-	
+	android:layout_height="275.0dip"
+	android:clipToPadding="false"
+	android:clipChildren="false">
+
 	<RelativeLayout
 		android:id="@+id/mainLayout"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
-
 		<TextView
 			android:id="@+id/batteryLevelLabel"
 			android:text="@string/charge_level"
@@ -124,7 +125,7 @@
 			android:singleLine="true"
 			android:visibility="invisible"
 			android:ellipsize="marquee" />
-	
+
 		<Button
 			android:id="@+id/settingsButton"
 			android:text="@string/settings"
@@ -254,5 +255,14 @@
 			android:textColor="#FFFFFF"
 			android:gravity="center" />
 	</RelativeLayout>
+
+	<TextView
+		android:id="@+id/pressMenuForMore"
+		android:text="@string/press_menu_for_more"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom|center_horizontal"
+		android:layout_marginBottom="-30.0dip"
+	/>
 
 </FrameLayout>
