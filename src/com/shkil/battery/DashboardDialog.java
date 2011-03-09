@@ -411,4 +411,10 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		}
 	}
 
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		hidePressMenuForMore();
+		return super.onMenuOpened(featureId, menu);
+	}
+
 }

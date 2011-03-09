@@ -75,5 +75,19 @@
 <string name="plus1h">+1ч</string>
 <string name="plus12h">+12ч</string>
 <string name="mute_alerts_for">Запретить звук на</string>
-
+<string name="quiet_time_summary">%1$s</string>
+<string name="quiet_time_empty_summary">Не указано</string>
+<string name="quiet_hours">Ночной режим</string>
+<string name="enable_quiet_hours">Разрешить ночной режим</string>
+<string name="enable_quiet_hours_summary_on">Правила ночного режима учитываются</string>
+<string name="enable_quiet_hours_summary_off">Правила ночного режима игнорируются</string>
+<string name="quiet_hours_start">Начало ночного режима</string>
+<string name="quiet_hours_end">Конец ночного режима</string>
+<string name="mute_low_charge_alerts">Беззвучные оповещения о низком заряде</string>
+<string name="mute_low_charge_alerts_summary_on">Беззвучные оповещения о низком заряде во время действия ночного режима</string>
+<string name="mute_low_charge_alerts_summary_off">Ночной режим не влияет на оповещения о низком заряде</string>
+<string name="mute_full_charge_alerts">Беззвучные оповещения о полном заряде</string>
+<string name="mute_full_charge_alerts_summary_on">Беззвучные оповещения о полном заряде во время действия ночного режима</string>
+<string name="mute_full_charge_alerts_summary_off">Ночной режим не влияет на оповещения о полном заряде</string>
+<string name="press_menu_for_more">Нажмите МЕНЮ - получите больше</string>
 </resources>
