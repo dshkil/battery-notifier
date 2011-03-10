@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<declare-styleable name="SeekBarPreference">
+		<attr name="max" format="integer" />
+		<attr name="dialogMessage" format="string" />
+		<attr name="suffix" format="string" />
+	</declare-styleable>
+
+	<declare-styleable name="TimePickerPreference">
+		<attr name="summaryFormat" format="string" />
+		<attr name="summaryEmpty" format="string" />
+	</declare-styleable>
+
+	<style name="DashboardLabel">
+		<item name="android:textSize">17.0dip</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="DashboardValue">
+		<item name="android:textSize">17.0dip</item>
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="DashboardButton">
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:gravity">center</item>
+		<item name="android:background">@drawable/btn_background</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">48.0dip</item>
+	</style>
+
+	<style name="plusminusButton">
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:background">@drawable/btn_background</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">38.0dip</item>
+		<item name="android:layout_marginBottom">7.0dip</item>
+	</style>
+
+</resources>

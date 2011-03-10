@@ -11,19 +11,8 @@
 	<item name="fullyChargedStatusTextScaleX" format="integer" type="integer">100</item>
 	<item format="float" type="string" name="mutedTextScaleX">0.97</item>
 	<item format="float" type="string" name="unpluggedSinceTextScaleX">0.97</item>
-	
+
 	<item type="dimen" format="dimension" name="mute_alerts_pad">25.0dip</item>
-
-	<declare-styleable name="SeekBarPreference">
-		<attr name="max" format="integer" />
-		<attr name="dialogMessage" format="string" />
-		<attr name="suffix" format="string" />
-	</declare-styleable>
-
-	<declare-styleable name="TimePickerPreference">
-		<attr name="summaryFormat" format="string" />
-		<attr name="summaryEmpty" format="string" />
-	</declare-styleable>
 
 	<string-array name="interval_titles">
 		<item>5 minutes</item>
