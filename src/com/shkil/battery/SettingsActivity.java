@@ -52,6 +52,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		catch (NameNotFoundException ex) {
 			Log.e(SettingsActivity.class.getSimpleName(), "", ex);
 		}
+		SharedPreferences settings = preferenceScreen.getSharedPreferences();
+		if (!settings.contains(Settings.QUIET_HOURS_ENABLED)) {
+			preferenceScreen.removePreference(preferenceScreen.findPreference("quiet_hours_category"));
+		}
 	}
 
 	@Override
