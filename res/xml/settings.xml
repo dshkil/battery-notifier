@@ -104,6 +104,7 @@
 </PreferenceCategory>
 
 <PreferenceCategory
+	android:key="quiet_hours_category"
 	android:title="@string/quiet_hours">
 	<CheckBoxPreference
 		android:key="quiet_hours_enabled"
