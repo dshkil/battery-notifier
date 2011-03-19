@@ -16,8 +16,8 @@ public class TimePickerPreference extends DialogPreference {
 	private TimePicker timePicker;
 	private int currentHours = -1;
 	private int currentMinutes = -1;
-	private String summaryFormat;
-	private String summaryEmpty;
+	private final String summaryFormat;
+	private final String summaryEmpty;
 
 	public TimePickerPreference(Context context, AttributeSet attrs) {
 		this(context, attrs, android.R.attr.dialogPreferenceStyle);
@@ -26,9 +26,9 @@ public class TimePickerPreference extends DialogPreference {
 	public TimePickerPreference(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		setPersistent(true);
-		TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.TimePickerPreference);
-		summaryFormat = styledAttrs.getString(R.styleable.TimePickerPreference_summaryFormat);
-		summaryEmpty = styledAttrs.getString(R.styleable.TimePickerPreference_summaryEmpty);
+		TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.SummaryFormat);
+		summaryFormat = styledAttrs.getString(R.styleable.SummaryFormat_summaryFormat);
+		summaryEmpty = styledAttrs.getString(R.styleable.SummaryFormat_summaryEmpty);
 		setSummary(summaryEmpty);
 	}
 
@@ -112,11 +112,13 @@ public class TimePickerPreference extends DialogPreference {
 			currentHours = timePicker.getCurrentHour();
 			currentMinutes = timePicker.getCurrentMinute();
 			int timeInMillis = currentHours * 3600000 + currentMinutes * 60000;
-			if (isPersistent()) {
-				persistInt(timeInMillis);
+			if (callChangeListener(timeInMillis)) {
+				if (isPersistent()) {
+					persistInt(timeInMillis);
+				}
+				updateSummary(timeInMillis);
+				notifyChanged();
 			}
-			updateSummary(timeInMillis);
-			callChangeListener(timeInMillis);
 		}
 	}
 

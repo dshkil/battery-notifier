@@ -119,19 +119,17 @@ public class Settings {
 
 	public static boolean isQuietHoursActive(SharedPreferences settings) {
 		if (settings.getBoolean(Settings.QUIET_HOURS_ENABLED, false)) {
-			int quietHoursStart = settings.getInt(Settings.QUIET_HOURS_START, -1);
-			if (quietHoursStart >= 0) {
-				int quietHoursEnd = settings.getInt(Settings.QUIET_HOURS_END, -1);
-				if (quietHoursEnd >= 0 && quietHoursStart != quietHoursEnd) {
-					long currentTimeInMillis = System.currentTimeMillis();
-					int timeZoneOffset = timeZone.getOffset(currentTimeInMillis);
-					int timeInMillis = (int) ((currentTimeInMillis + timeZoneOffset) % 86400000);
-					if (quietHoursEnd > quietHoursStart) {
-						return timeInMillis >= quietHoursStart && timeInMillis < quietHoursEnd;
-					}
-					else {
-						return timeInMillis >= quietHoursStart || timeInMillis < quietHoursEnd;
-					}
+			int quietHoursStart = settings.getInt(Settings.QUIET_HOURS_START, 0);
+			int quietHoursEnd = settings.getInt(Settings.QUIET_HOURS_END, 0);
+			if (quietHoursStart != quietHoursEnd) {
+				long currentTimeInMillis = System.currentTimeMillis();
+				int timeZoneOffset = timeZone.getOffset(currentTimeInMillis);
+				int timeInMillis = (int) ((currentTimeInMillis + timeZoneOffset) % 86400000);
+				if (quietHoursEnd > quietHoursStart) {
+					return timeInMillis >= quietHoursStart && timeInMillis < quietHoursEnd;
+				}
+				else {
+					return timeInMillis >= quietHoursStart || timeInMillis < quietHoursEnd;
 				}
 			}
 		}

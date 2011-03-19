@@ -186,9 +186,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		Log.i(TAG, "onDestroy");
 		serviceStarted = false;
 		unregisterReceiver(batteryInfoReceiver);
-		if (insistTimerActive) {
-			stopInsist();
-		}
+		stopInsist();
 		settings.unregisterOnSharedPreferenceChangeListener(this);
 		hideNotification();
 		if (stopForegroundMethod == null) {
@@ -213,9 +211,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (Settings.LOW_CHARGE_SOUND_MODE.equals(key) || Settings.LOW_CHARGE_VIBRO_MODE.equals(key)) {
 			if (batteryState == STATE_LOW) {
 				if (Settings.isAlarmDisabled(Settings.LOW_CHARGE_SOUND_MODE, Settings.LOW_CHARGE_VIBRO_MODE, settings)) {
-					if (insistTimerActive) {
-						stopInsist();
-					}
+					stopInsist();
 				}
 				else if (!insistTimerActive) {
 					startInsist();
@@ -302,6 +298,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			alarmManager.cancel(insistTimerPendingIntent);
 		}
 		insistTimerActive = true;
+		if (player != null) {
+			player.stop();
+		}
 		long firstTime = System.currentTimeMillis() + insistInterval;
 		if (mutedUntilTimeMillis > 0) {
 			firstTime = Math.max(firstTime, mutedUntilTimeMillis);
@@ -310,9 +309,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	void stopInsist() {
-		insistTimerActive = false;
-		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-		alarmManager.cancel(insistTimerPendingIntent);
+		if (insistTimerActive) {
+			insistTimerActive = false;
+			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+			alarmManager.cancel(insistTimerPendingIntent);
+		}
 		if (player != null) {
 			player.stop();
 		}
@@ -413,9 +414,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 			if (stateChanged) {
 				this.batteryState = state;
 				notification.when = System.currentTimeMillis();
-				if (insistTimerActive) {
-					stopInsist();
-				}
+				stopInsist();
 			}
 			notification.flags = DEFAULT_NOTIFICATION_FLAGS;
 			switch (state) {
@@ -462,7 +461,9 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 							notification.flags |= Notification.FLAG_AUTO_CANCEL;
 						}
 						updateNotification();
-						if (notifyFullBattery && stateChanged && !Settings.isQuietHoursActive(settings, Settings.MUTE_FULL_CHARGE_ALERTS)) {
+						if (notifyFullBattery && stateChanged && System.currentTimeMillis() >= mutedUntilTimeMillis
+							&& !Settings.isQuietHoursActive(settings, Settings.MUTE_FULL_CHARGE_ALERTS))
+						{
 							alarm(Settings.FULL_CHARGE_SOUND_MODE, Settings.FULL_CHARGE_VIBRO_MODE, Settings.FULL_CHARGE_RINGTONE);
 						}
 					}

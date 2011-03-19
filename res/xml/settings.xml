@@ -22,14 +22,16 @@
 
 <PreferenceCategory
 	android:title="@string/low_battery_options">
-	<org.damazio.notifier.SeekBarPreference
+	<com.shkil.preference.SeekBarPreference
 		android:key="low_battery_level"
 		android:title="@string/low_battery_level"
 		android:dialogTitle="@string/low_battery_level"
 		android:defaultValue="@integer/default_low_level"
+		app:valueFormat="%1$d%%"
 		app:dialogMessage="@string/low_battery_level_hint"
-		app:max="50"
-		app:suffix=" %"
+		app:summaryFormat="@string/low_battery_level_summary"
+		app:summaryEmpty="@string/low_battery_level_disabled"
+		app:maxValue="50"
 	/>
 	<ListPreference
 		android:key="alert_interval"
