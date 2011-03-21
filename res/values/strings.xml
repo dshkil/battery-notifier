@@ -75,7 +75,8 @@
 <string name="battery_status">Battery status:</string>
 <string name="mute_alerts">Mute alerts...</string>
 <string name="settings">Settings</string>
-<string name="mute_apply">Ok</string>
+<string name="mute">Mute</string>
+<string name="dontMute">Don\'t mute</string>
 <string name="minus15m">-15m</string>
 <string name="minus1h">-1h</string>
 <string name="minus12h">-12h</string>

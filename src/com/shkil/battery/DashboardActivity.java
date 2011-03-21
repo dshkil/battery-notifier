@@ -15,6 +15,7 @@ public class DashboardActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		BatteryNotifierService.playerStop();
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		if (settings.getBoolean(Settings.SERVICE_STARTED, true) && !BatteryNotifierService.isRunning(this)) {
 			BatteryNotifierService.start(DashboardActivity.this);

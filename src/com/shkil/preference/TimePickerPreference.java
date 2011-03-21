@@ -82,7 +82,7 @@ public class TimePickerPreference extends DialogPreference {
 
 	private void updateSummary(int timeInMillis) {
 		if (timeInMillis >= 0) {
-			String timeString = DateUtils.formatDateTime(getContext(), timeInMillis, DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_UTC);
+			String timeString = DateUtils.formatDateTime(getContext(), timeInMillis, DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_UTC | DateUtils.FORMAT_NO_NOON_MIDNIGHT);
 			setSummary(summaryFormat != null ? String.format(summaryFormat, timeString) : timeString);
 		}
 		else {

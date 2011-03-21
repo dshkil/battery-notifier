@@ -20,7 +20,8 @@
 			android:text="@string/charge_level"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textSize="17.0dip" />
+			android:textSize="17.0dip"
+			android:textColor="#FFFFFF" />
 		<TextView
 			android:id="@+id/batteryLevelValue"
 			android:layout_alignParentRight="true"
@@ -40,7 +41,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="8.0dip"
 			android:textScaleX="0.95"
-			android:textSize="17.0dip" />
+			android:textSize="17.0dip"
+			android:textColor="#FFFFFF" />
 		<TextView
 			android:id="@+id/batteryStatusValue"
 			android:text="@string/statusUnknown"
@@ -60,7 +62,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="8.0dip"
 			android:textScaleX="@string/unpluggedSinceTextScaleX"
-			android:textSize="17.0dip" />
+			android:textSize="17.0dip"
+			android:textColor="#FFFFFF" />
 		<TextView
 			android:id="@+id/unpluggedSinceValue"
 			android:text="@string/unknown"
@@ -144,20 +147,37 @@
 		android:layout_height="fill_parent"
 		android:visibility="gone"
 		android:layout_gravity="bottom">
-		<Button
-			android:id="@+id/muteSetButton"
-			android:text="@string/mute_apply"
+		<LinearLayout
+			android:id="@+id/muteActionButtons"
 			android:layout_width="fill_parent"
 			android:layout_height="48.0dip"
-			android:layout_alignParentBottom="true"
-			android:textColor="#FFFFFF"
-			android:textStyle="bold"
-			android:background="@drawable/btn_background" />
+			android:layout_alignParentBottom="true">
+			<Button
+				android:id="@+id/muteSetButton"
+				android:text="@string/mute"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_weight="1.0"
+				android:layout_marginRight="3.0dip"
+				android:textColor="#FFFFFF"
+				android:textStyle="bold"
+				android:background="@drawable/btn_background" />
+			<Button
+				android:id="@+id/muteCancelButton"
+				android:text="@string/dontMute"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:layout_weight="1.0"
+				android:layout_marginLeft="3.0dip"
+				android:textColor="#FFFFFF"
+				android:textStyle="bold"
+				android:background="@drawable/btn_background" />
+		</LinearLayout>
 		<LinearLayout
 			android:id="@+id/muteMinusButtonsLayout"
 			android:layout_width="54.0dip"
 			android:layout_height="fill_parent"
-			android:layout_above="@id/muteSetButton"
+			android:layout_above="@id/muteActionButtons"
 			android:layout_alignParentLeft="true"
 			android:layout_marginTop="13.0dip"
 			android:orientation="vertical"
@@ -193,7 +213,7 @@
 			android:id="@+id/mutePlusButtonsLayout"
 			android:layout_width="54.0dip"
 			android:layout_height="fill_parent"
-			android:layout_above="@id/muteSetButton"
+			android:layout_above="@id/muteActionButtons"
 			android:layout_alignParentRight="true"
 			android:layout_marginTop="13.0dip"
 			android:orientation="vertical"
@@ -259,6 +279,7 @@
 	<TextView
 		android:id="@+id/pressMenuForMore"
 		android:text="@string/press_menu_for_more"
+		android:textColor="#FFFFFF"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom|center_horizontal"

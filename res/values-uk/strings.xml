@@ -18,6 +18,7 @@
 <string name="service_stopped">Службу було зупинено</string>
 <string name="service_is_running">Служба зараз працює</string>
 <string name="service_is_stopped">Служба зупинена. Сповіщення показуватися НЕ будуть</string>
+<string name="service_is_stopped_short">Служба наразі зупинена</string>
 <string name="battery_level_is_low">Заряд батареї є низьким</string>
 <string name="battery_level_is_okay">Заряд батареї є достатнім</string>
 <string name="battery_level_is_full">Батарея повністю заряджена</string>
@@ -61,13 +62,14 @@
 <string name="unplugged_since">Від’єднано:</string>
 <string name="plugged_since">Під’єднано:</string>
 <string name="day_suffix_short">д\u0020</string>
-<string name="alerts_not_muted">Режим заборони звуку сповіщень буде вимкнено</string>
+<string name="alerts_not_muted">Режим заборони\nзвуку сповіщень\nвимкнено</string>
 <string name="alerts_muted_until">Заборона звуку сповіщень до\n%1$s</string>
 <string name="charge_level">Рівень заряду:</string>
 <string name="battery_status">Стан батареї:</string>
 <string name="mute_alerts">Заборонити звук...</string>
 <string name="settings">Налаштування</string>
-<string name="mute_apply">Застосувати</string>
+<string name="mute">Готово</string>
+<string name="dontMute">Скасувати</string>
 <string name="minus15m">-15хв</string>
 <string name="minus1h">-1год</string>
 <string name="minus12h">-12г</string>

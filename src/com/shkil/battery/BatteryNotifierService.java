@@ -36,10 +36,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		public void onReceive(Context context, Intent intent) {
 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
 			boolean statusChanged = status != lastStatus;
 			boolean levelChanged = level != lastRawLevel;
-			if (levelChanged || statusChanged) {
+			boolean pluggedChanged = plugged != powerSource;
+			if (levelChanged || statusChanged || pluggedChanged) {
 				lastRawLevel = level;
+				powerSource = plugged;
 				//Log.v(TAG, "batteryInfoReceiver: status=" + status + ", level=" + level);
 				if (levelChanged) {
 					batteryLevel = level * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
@@ -48,8 +51,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 					}
 				}
 				if (status == BatteryManager.BATTERY_STATUS_FULL) {
-					if (statusChanged) {
-						setBatteryState(STATE_FULL, false);
+					if (statusChanged || pluggedChanged) {
+						setBatteryState(plugged == 0 ? STATE_OKAY : STATE_FULL, false);
 					}
 					else if (notificationVisible) {
 						updateNotification();
@@ -126,6 +129,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	// Battery state information
 	int batteryState;
 	int batteryLevel;
+	int powerSource;
 	static volatile long pluggedSince;
 	static volatile long unpluggedSince;
 
@@ -551,6 +555,12 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	public static long getUnpluggedSince() {
 		return unpluggedSince;
+	}
+
+	public static void playerStop() {
+		if (player != null) {
+			player.stop();
+		}
 	}
 
 }

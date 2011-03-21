@@ -21,7 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
-class DashboardDialog extends Dialog implements OnClickListener {
+public class DashboardDialog extends Dialog implements OnClickListener {
 
 	private final class BatteryInfoReceiver extends BroadcastReceiver {
 		private int lastRawLevel;
@@ -88,9 +88,6 @@ class DashboardDialog extends Dialog implements OnClickListener {
 			lastRawLevel = lastStatus = 0;
 			lastPlugged = -1;
 		}
-		public int getPluggedState() {
-			return lastPlugged;
-		}
 	}
 
 	static final String TAG = DashboardDialog.class.getSimpleName();
@@ -103,11 +100,12 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	TextView unpluggedSinceLabel;
 	TextView muteDurationView;
 	TextView muteUntilView;
-	long activityPausedAt;
-	long muteDuration = 3600000;
+	View muteSetButton;
+	long muteDuration;
 	float fullyChargedStatusTextScaleX;
 
 	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();
+
 
 	public DashboardDialog(Context context) {
 		super(context);
@@ -124,10 +122,12 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		unpluggedSinceValue = (TextView) findViewById(R.id.unpluggedSinceValue);
 		muteDurationView = (TextView) findViewById(R.id.muteDuration);
 		muteUntilView = (TextView) findViewById(R.id.muteUntilText);
+		muteSetButton = findViewById(R.id.muteSetButton);
 		findViewById(R.id.muteAlertsButton).setOnClickListener(this);
 		findViewById(R.id.unmuteAlertsButton).setOnClickListener(this);
 		findViewById(R.id.settingsButton).setOnClickListener(this);
 		findViewById(R.id.muteSetButton).setOnClickListener(this);
+		findViewById(R.id.muteCancelButton).setOnClickListener(this);
 		findViewById(R.id.startServiceButton).setOnClickListener(this);
 		findViewById(R.id.muteMinus15mButton).setOnClickListener(this);
 		findViewById(R.id.muteMinus1hButton).setOnClickListener(this);
@@ -153,32 +153,32 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				break;
 			}
 			case R.id.muteAlertsButton:
+				muteDuration = 0;
 				updateMuteDuration();
 				findViewById(R.id.muteLayout).setVisibility(View.VISIBLE);
 				findViewById(R.id.mainLayout).setVisibility(View.INVISIBLE);
 				hidePressMenuForMore();
+				BatteryNotifierService.playerStop();
 				break;
 			case R.id.muteSetButton:
-				if (muteDuration > 0) {
-					settings.edit().putLong(Settings.MUTED_UNTIL_TIME, System.currentTimeMillis() + muteDuration).commit();
-					showMuted();
-				}
-				else {
-					settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
-					showUnmuted(false);
-				}
+				applyMute();
 				break;
 			case R.id.unmuteAlertsButton:
+				muteDuration = 0;
 				settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
 				showUnmuted(true);
 				hidePressMenuForMore();
+				break;
+			case R.id.muteCancelButton:
+				settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
+				showUnmuted(false);
 				break;
 			case R.id.startServiceButton: {
 				Context context = getContext();
 				BatteryNotifierService.start(context);
 				Toast.makeText(context, R.string.service_started, Toast.LENGTH_SHORT).show();
-				unpluggedSinceLabel.setText(batteryInfoReceiver.getPluggedState() > 0 ? R.string.plugged_since : R.string.unplugged_since);
-				unpluggedSinceValue.setText(R.string.unknown);
+				unpluggedSinceLabel.setText(null);
+				unpluggedSinceValue.setText(null);
 				updateRunningState();
 				break;
 			}
@@ -198,6 +198,18 @@ class DashboardDialog extends Dialog implements OnClickListener {
 		View pressMenuForMore = findViewById(R.id.pressMenuForMore);
 		pressMenuForMore.setVisibility(View.GONE);
 		pressMenuForMore.clearAnimation();
+	}
+
+	private void applyMute() {
+		if (muteDuration > 0) {
+			settings.edit().putLong(Settings.MUTED_UNTIL_TIME, System.currentTimeMillis() + muteDuration).commit();
+			showMuted();
+			muteDuration = 0;
+		}
+		else {
+			settings.edit().putLong(Settings.MUTED_UNTIL_TIME, 0).commit();
+			showUnmuted(false);
+		}
 	}
 
 	@Override
@@ -243,16 +255,6 @@ class DashboardDialog extends Dialog implements OnClickListener {
 	}
 
 	public void onActivityResume() {
-		if (activityPausedAt > 0) {
-			if (System.currentTimeMillis() - activityPausedAt > 60000) {
-				View snoozeLayout = findViewById(R.id.muteLayout);
-				if (snoozeLayout.getVisibility() == View.VISIBLE) {
-					snoozeLayout.setVisibility(View.GONE);
-					findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
-				}
-			}
-			activityPausedAt = 0;
-		}
 		Context context = getContext();
 		settings = PreferenceManager.getDefaultSharedPreferences(context);
 		lowBatteryLevel = settings.getInt(Settings.LOW_BATTERY_LEVEL, context.getResources().getInteger(R.integer.default_low_level));
@@ -267,7 +269,9 @@ class DashboardDialog extends Dialog implements OnClickListener {
 
 	public void onActivityPause() {
 		getContext().unregisterReceiver(batteryInfoReceiver);
-		activityPausedAt = System.currentTimeMillis();
+		if (findViewById(R.id.muteLayout).getVisibility() == View.VISIBLE) {
+			applyMute();
+		}
 	}
 
 	void updateRunningState() {
@@ -357,6 +361,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 			muteDuration = 0;
 			muteDurationView.setText("0:00");
 			muteUntilView.setText(R.string.alerts_not_muted);
+			muteSetButton.setEnabled(false);
 		}
 		else {
 			Context context = getContext();
@@ -378,6 +383,7 @@ class DashboardDialog extends Dialog implements OnClickListener {
 				DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL
 			);
 			muteUntilView.setText(context.getString(R.string.alerts_muted_until, untilDateTime));
+			muteSetButton.setEnabled(true);
 		}
 	}
 
@@ -401,9 +407,10 @@ class DashboardDialog extends Dialog implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		View snoozeLayout = findViewById(R.id.muteLayout);
-		if (snoozeLayout.getVisibility() == View.VISIBLE) {
-			snoozeLayout.setVisibility(View.GONE);
+		View muteLayout = findViewById(R.id.muteLayout);
+		if (muteLayout.getVisibility() == View.VISIBLE) {
+			applyMute();
+			muteLayout.setVisibility(View.GONE);
 			findViewById(R.id.mainLayout).setVisibility(View.VISIBLE);
 		}
 		else {
