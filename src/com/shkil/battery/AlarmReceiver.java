@@ -19,7 +19,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 		//Log.d(TAG, "onReceive() batteryState=" + (service != null ? service.getBatteryState() : "null") + ", intent=" + intent);
 		if (service != null && service.getBatteryState() == BatteryNotifierService.STATE_LOW) {
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-			BatteryNotifierService.alarm(LOW_CHARGE_SOUND_MODE, LOW_CHARGE_VIBRO_MODE, LOW_CHARGE_RINGTONE, settings, context);
+			if (!Settings.isQuietHoursActive(settings, Settings.MUTE_LOW_CHARGE_ALERTS)) {
+				BatteryNotifierService.alarm(LOW_CHARGE_SOUND_MODE, LOW_CHARGE_VIBRO_MODE, LOW_CHARGE_RINGTONE, settings, context);
+			}
 		}
 		else {
 			//Log.d(TAG, "onReceive() canceling intent");
