@@ -117,7 +117,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	static final int SINCE_TIME_FORMAT = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_MONTH;
 
-	private static volatile boolean serviceStarted;
+	private static volatile BatteryNotifierService instance;
 
 	// Cached settings values
 	int lowBatteryLevel;
@@ -182,13 +182,13 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		batteryInfoReceiver.reset();
 		registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		settings.registerOnSharedPreferenceChangeListener(this);
-		serviceStarted = true;
+		instance = this;
 	}
 
 	@Override
 	public void onDestroy() {
 		Log.i(TAG, "onDestroy");
-		serviceStarted = false;
+		instance = null;
 		unregisterReceiver(batteryInfoReceiver);
 		stopInsist();
 		settings.unregisterOnSharedPreferenceChangeListener(this);
@@ -324,7 +324,11 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	public static boolean isStarted() {
-		return serviceStarted;
+		return instance != null;
+	}
+
+	public static BatteryNotifierService getInstance() {
+		return instance;
 	}
 
 	public static boolean isRunning(Context context) {
@@ -561,6 +565,10 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (player != null) {
 			player.stop();
 		}
+	}
+
+	public int getBatteryState() {
+		return batteryState;
 	}
 
 }
