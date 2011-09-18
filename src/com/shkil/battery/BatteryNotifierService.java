@@ -21,11 +21,16 @@ import android.media.AsyncPlayer;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 public class BatteryNotifierService extends Service implements OnSharedPreferenceChangeListener {
 
@@ -155,7 +160,8 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		}
 	}
 
-	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();	
+	final BatteryInfoReceiver batteryInfoReceiver = new BatteryInfoReceiver();
+	private int dateTimeViewId;	
 
 	void checkBatteryLevel() {
 		if (batteryLevel > lowBatteryLevel || lowBatteryLevel == 0) {
@@ -172,6 +178,7 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 		if (startForegroundMethod == null) {
 			setForeground(true);
 		}
+		dateTimeViewId = findEventInfoDateViewId(this);
 		insistTimerPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, AlarmReceiver.class), 0);
 		notificationService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		notification = new Notification();
@@ -406,6 +413,12 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 	}
 
 	private void showNotification(Notification notification) {
+		long hiddenTime = Build.VERSION.SDK_INT >= 9 ? -Long.MAX_VALUE : Long.MAX_VALUE;
+		notification.when = hiddenTime;
+		notification.icon = -1;
+		if (dateTimeViewId > 0) {
+			notification.contentView.setViewVisibility(dateTimeViewId, View.GONE);
+		}
 		startForegroundCompat(NOTIFICATION_ID, notification);
 		notificationVisible = true;
 	}
@@ -569,6 +582,37 @@ public class BatteryNotifierService extends Service implements OnSharedPreferenc
 
 	public int getBatteryState() {
 		return batteryState;
+	}
+
+	private static int findDateViewId(ViewGroup parent) {
+		int c = parent.getChildCount();
+		for (int i = 0; i < c; i++) {
+			View child = parent.getChildAt(i);
+			String childClassName = child.getClass().getName();
+			if (childClassName.contains("DateTime")) {
+				return child.getId();
+			}
+			if (child instanceof ViewGroup) {
+				int viewId = findDateViewId((ViewGroup) child);
+				if (viewId > 0) {
+					return viewId;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public static int findEventInfoDateViewId(Context context) {
+		try {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			Notification n = new Notification();
+			n.setLatestEventInfo(context, "", "", null);
+			ViewGroup contentViewLayout = (ViewGroup) inflater.inflate(n.contentView.getLayoutId(), null);
+			return findDateViewId(contentViewLayout);
+		}
+		catch (RuntimeException ex) {
+			return -2;
+		}
 	}
 
 }
